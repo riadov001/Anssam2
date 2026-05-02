@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { AppHeader } from "@/components/AppHeader";
 import { useApp } from "@/contexts/AppContext";
 import { SURAHS, Surah } from "@/data/surahs";
 import { useTranslations } from "@/data/translations";
@@ -174,6 +175,7 @@ export default function QuranScreen() {
 
   return (
     <View style={screenStyles.container}>
+      <AppHeader subtitle="Al-Qur'ān al-Karīm" />
       <FlatList
         data={filtered}
         keyExtractor={(item) => String(item.id)}
@@ -243,7 +245,7 @@ function makeStyles(colors: any, topPad: number, bottomPad: number) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
     header: {
-      paddingTop: topPad + 16,
+      paddingTop: 16,
       paddingHorizontal: 20,
       paddingBottom: 12,
       backgroundColor: colors.background,

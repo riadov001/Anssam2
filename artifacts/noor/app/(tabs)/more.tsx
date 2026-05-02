@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { AppHeader } from "@/components/AppHeader";
 import { useApp } from "@/contexts/AppContext";
 import { useTranslations } from "@/data/translations";
 import { useColors } from "@/hooks/useColors";
@@ -81,12 +82,13 @@ export default function MoreScreen() {
   ];
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}
-    >
-      <Text style={styles.title}>{t.moreTitle}</Text>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <AppHeader subtitle="Découvrir & explorer" />
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
 
       {/* Hijri Calendar Hero */}
       <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
@@ -182,25 +184,40 @@ export default function MoreScreen() {
           <View style={styles.versionRow}>
             <View style={styles.appNameRow}>
               <Text style={styles.appName}>Anssam</Text>
-              <Text style={styles.appNameAr}> — أنسام</Text>
+              <View style={styles.appNameDot} />
+              <Text style={styles.appNameAr}>أنسام</Text>
             </View>
             <Text style={styles.version}>{t.appVersion}</Text>
           </View>
         </View>
       </Animated.View>
 
-      {/* SPI Attribution */}
-      <Animated.View style={[styles.spiRow, { opacity: fadeAnim }]}>
-        <Text style={styles.madeByText}>Made by</Text>
-        <View style={styles.spiLogoWrap}>
-          <Image
-            source={require("../../assets/images/spi-logo.jpg")}
-            style={styles.spiLogoImg}
-          />
+      {/* SPI Attribution — Premium signature */}
+      <Animated.View style={[styles.spiCard, { opacity: fadeAnim }]}>
+        <LinearGradient
+          colors={[colors.primary + "10", colors.gold + "08", "transparent"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
+        <Text style={styles.madeByText}>Conçu et développé par</Text>
+        <View style={styles.spiBrandRow}>
+          <View style={styles.spiLogoWrap}>
+            <Image
+              source={require("../../assets/images/spi-logo.jpg")}
+              style={styles.spiLogoImg}
+              resizeMode="cover"
+            />
+          </View>
+          <View style={styles.spiTextCol}>
+            <Text style={styles.spiName}>Straight Path</Text>
+            <Text style={styles.spiNameAccent}>Intelligence</Text>
+          </View>
         </View>
-        <Text style={styles.spiName}>Straight Path Intelligence</Text>
+        <Text style={styles.spiTagline}>L'intelligence au service de la spiritualité</Text>
       </Animated.View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -208,7 +225,7 @@ function makeStyles(colors: any, topPad: number, bottomPad: number) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
     content: {
-      paddingTop: topPad + 16,
+      paddingTop: 16,
       paddingHorizontal: 20,
       paddingBottom: bottomPad + 100,
       gap: 16,
@@ -257,14 +274,71 @@ function makeStyles(colors: any, topPad: number, bottomPad: number) {
     aboutSub: { fontFamily: "Inter_400Regular", fontSize: 12, color: colors.mutedForeground, marginTop: 2 },
     aboutDivider: { height: 1, backgroundColor: colors.border, marginVertical: 14 },
     versionRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-    appNameRow: { flexDirection: "row", alignItems: "baseline" },
-    appName: { fontFamily: "Inter_700Bold", fontSize: 16, color: colors.primary },
-    appNameAr: { fontFamily: "Inter_700Bold", fontSize: 16, color: colors.gold },
+    appNameRow: { flexDirection: "row", alignItems: "center", gap: 12 },
+    appNameDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: colors.gold, opacity: 0.7 },
+    appName: { fontFamily: "Inter_700Bold", fontSize: 18, color: colors.primary, letterSpacing: 0.3 },
+    appNameAr: { fontFamily: "Inter_700Bold", fontSize: 18, color: colors.gold, letterSpacing: 0.5 },
     version: { fontFamily: "Inter_400Regular", fontSize: 12, color: colors.mutedForeground },
-    spiRow: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingVertical: 4 },
-    madeByText: { fontFamily: "Inter_400Regular", fontSize: 11, color: colors.mutedForeground, opacity: 0.55 },
-    spiLogoWrap: { width: 20, height: 20, borderRadius: 10, overflow: "hidden", borderWidth: 1, borderColor: colors.border },
-    spiLogoImg: { width: 20, height: 20 },
-    spiName: { fontFamily: "Inter_500Medium", fontSize: 11, color: colors.mutedForeground, opacity: 0.65 },
+    spiCard: {
+      borderRadius: 22,
+      paddingVertical: 24,
+      paddingHorizontal: 20,
+      alignItems: "center",
+      gap: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: "hidden",
+      backgroundColor: colors.card,
+    },
+    madeByText: {
+      fontFamily: "Inter_400Regular",
+      fontSize: 11,
+      color: colors.mutedForeground,
+      letterSpacing: 1.4,
+      textTransform: "uppercase",
+      opacity: 0.7,
+    },
+    spiBrandRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 14,
+    },
+    spiLogoWrap: {
+      width: 56,
+      height: 56,
+      borderRadius: 14,
+      overflow: "hidden",
+      borderWidth: 1.5,
+      borderColor: colors.gold + "55",
+      shadowColor: colors.gold,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.25,
+      shadowRadius: 10,
+      elevation: 6,
+    },
+    spiLogoImg: { width: "100%", height: "100%" },
+    spiTextCol: { gap: 1 },
+    spiName: {
+      fontFamily: "Inter_700Bold",
+      fontSize: 18,
+      color: colors.foreground,
+      letterSpacing: 0.4,
+      lineHeight: 22,
+    },
+    spiNameAccent: {
+      fontFamily: "Inter_700Bold",
+      fontSize: 18,
+      color: colors.primary,
+      letterSpacing: 0.4,
+      lineHeight: 22,
+    },
+    spiTagline: {
+      fontFamily: "Inter_400Regular",
+      fontSize: 12,
+      color: colors.mutedForeground,
+      fontStyle: "italic",
+      textAlign: "center",
+      opacity: 0.85,
+    },
   });
 }

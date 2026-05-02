@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { AppHeader } from "@/components/AppHeader";
 import { useApp } from "@/contexts/AppContext";
 import { useTranslations } from "@/data/translations";
 import { useColors } from "@/hooks/useColors";
@@ -98,6 +99,7 @@ export default function PrayerScreen() {
         style={StyleSheet.absoluteFill}
       />
       <Animated.View style={[{ flex: 1 }, { opacity: fadeAnim }]}>
+        <AppHeader subtitle={`${city} · ${hijri.day} ${hijriMonth} ${hijri.year}`} />
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
@@ -111,7 +113,7 @@ export default function PrayerScreen() {
             />
           }
         >
-          {/* Header */}
+          {/* Date row */}
           <View style={styles.header}>
             <View>
               <View style={styles.cityRow}>

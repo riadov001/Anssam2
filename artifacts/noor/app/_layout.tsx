@@ -38,6 +38,26 @@ function RootLayoutNav() {
         name="settings"
         options={{ title: "Settings", headerBackTitle: "More", headerTintColor: "#2D8B6F" }}
       />
+      <Stack.Screen
+        name="search"
+        options={{ presentation: "modal", headerShown: false }}
+      />
+      <Stack.Screen
+        name="qibla"
+        options={{ title: "Qibla", headerBackTitle: "Plus", headerTintColor: "#2D8B6F" }}
+      />
+      <Stack.Screen
+        name="agenda"
+        options={{ title: "Agenda islamique", headerBackTitle: "Plus", headerTintColor: "#2D8B6F" }}
+      />
+      <Stack.Screen
+        name="mosques"
+        options={{ title: "Mosquées à proximité", headerBackTitle: "Plus", headerTintColor: "#2D8B6F" }}
+      />
+      <Stack.Screen
+        name="halal"
+        options={{ title: "Commerces halal", headerBackTitle: "Plus", headerTintColor: "#2D8B6F" }}
+      />
     </Stack>
   );
 }

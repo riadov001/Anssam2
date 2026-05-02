@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { AppHeader } from "@/components/AppHeader";
 import { useApp } from "@/contexts/AppContext";
 import { useColors } from "@/hooks/useColors";
 
@@ -99,7 +100,7 @@ export default function VideosScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Vidéos Islamiques</Text>
+      <AppHeader subtitle="Vidéos islamiques" />
 
       {/* Age group tabs */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>

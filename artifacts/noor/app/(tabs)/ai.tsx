@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { AppHeader } from "@/components/AppHeader";
 import { useApp } from "@/contexts/AppContext";
 import { useColors } from "@/hooks/useColors";
 
@@ -142,6 +143,7 @@ export default function AiScreen() {
   if (showModes) {
     return (
       <View style={styles.container}>
+        <AppHeader subtitle="Nour · Assistant IA islamique" />
         <LinearGradient colors={[colors.primary + "30", "transparent"]} style={styles.modeBg} />
         <Text style={styles.modeTitle}>Nour — IA Islamique</Text>
         <Text style={styles.modeSubtitle}>
