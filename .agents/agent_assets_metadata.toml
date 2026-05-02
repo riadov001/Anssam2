@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "W5jOXwlQkZYIo73Sxaeuy"
+uri = "file://artifacts/noor/assets/images/icon.png"
+type = "image"
+title = "generated_image"
