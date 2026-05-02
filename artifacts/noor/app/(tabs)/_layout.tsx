@@ -24,13 +24,13 @@ function NativeTabLayout() {
         <Icon sf={{ default: "book", selected: "book.fill" }} />
         <Label>{t.quran}</Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="dhikr">
-        <Icon sf={{ default: "circle.grid.cross", selected: "circle.grid.cross.fill" }} />
-        <Label>{t.dhikr}</Label>
+      <NativeTabs.Trigger name="ai">
+        <Icon sf={{ default: "sparkles", selected: "sparkles" }} />
+        <Label>Nour IA</Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="duas">
-        <Icon sf={{ default: "hands.sparkles", selected: "hands.sparkles.fill" }} />
-        <Label>{t.duas}</Label>
+      <NativeTabs.Trigger name="videos">
+        <Icon sf={{ default: "play.rectangle", selected: "play.rectangle.fill" }} />
+        <Label>Vidéos</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="more">
         <Icon sf={{ default: "square.grid.2x2", selected: "square.grid.2x2.fill" }} />
@@ -100,26 +100,26 @@ function ClassicTabLayout() {
         }}
       />
       <Tabs.Screen
-        name="dhikr"
+        name="ai"
         options={{
-          title: t.dhikr,
+          title: "Nour IA",
           tabBarIcon: ({ color }) =>
             isIOS ? (
-              <SymbolView name="circle.grid.cross" tintColor={color} size={24} />
+              <SymbolView name="sparkles" tintColor={color} size={24} />
             ) : (
-              <Ionicons name="ellipsis-horizontal-circle-outline" size={22} color={color} />
+              <Ionicons name="sparkles-outline" size={22} color={color} />
             ),
         }}
       />
       <Tabs.Screen
-        name="duas"
+        name="videos"
         options={{
-          title: t.duas,
+          title: "Vidéos",
           tabBarIcon: ({ color }) =>
             isIOS ? (
-              <SymbolView name="hands.sparkles" tintColor={color} size={24} />
+              <SymbolView name="play.rectangle" tintColor={color} size={24} />
             ) : (
-              <Ionicons name="hand-left-outline" size={22} color={color} />
+              <Ionicons name="play-circle-outline" size={22} color={color} />
             ),
         }}
       />
@@ -135,6 +135,9 @@ function ClassicTabLayout() {
             ),
         }}
       />
+      {/* Hidden tabs — accessible via router.push only */}
+      <Tabs.Screen name="dhikr" options={{ href: null }} />
+      <Tabs.Screen name="duas" options={{ href: null }} />
     </Tabs>
   );
 }

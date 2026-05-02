@@ -19,18 +19,10 @@ import { useTranslations } from "@/data/translations";
 import { useColors } from "@/hooks/useColors";
 import { toHijri } from "@/hooks/usePrayerTimes";
 
-interface FeatureCard {
-  icon: string;
-  labelKey: string;
-  route: string;
-  color: string;
-  desc: string;
-}
-
 const ISLAMIC_MONTHS_AR = [
-  "مُحَرَّم", "صَفَر", "رَبِيعٌ الأَوَّل", "رَبِيعٌ الثَّانِي",
-  "جُمَادَى الأُولَى", "جُمَادَى الآخِرَة", "رَجَب", "شَعْبَان",
-  "رَمَضَان", "شَوَّال", "ذُو القَعْدَة", "ذُو الحِجَّة",
+  "مُحَرَّم","صَفَر","رَبِيعٌ الأَوَّل","رَبِيعٌ الثَّانِي",
+  "جُمَادَى الأُولَى","جُمَادَى الآخِرَة","رَجَب","شَعْبَان",
+  "رَمَضَان","شَوَّال","ذُو القَعْدَة","ذُو الحِجَّة",
 ];
 
 const STAR_POSITIONS = [
@@ -41,6 +33,15 @@ const STAR_POSITIONS = [
   { top: "10%", left: "75%", size: 3, opacity: 0.3 },
   { top: "55%", left: "60%", size: 2, opacity: 0.7 },
 ];
+
+interface FeatureCard {
+  icon: string;
+  label: string;
+  route: string;
+  color: string;
+  desc: string;
+  emoji?: string;
+}
 
 export default function MoreScreen() {
   const colors = useColors();
@@ -70,20 +71,13 @@ export default function MoreScreen() {
   const styles = makeStyles(colors, topPad, bottomPad);
 
   const features: FeatureCard[] = [
-    {
-      icon: "star",
-      labelKey: "namesOfAllah",
-      route: "/names",
-      color: colors.gold,
-      desc: "99 Beautiful Names",
-    },
-    {
-      icon: "settings",
-      labelKey: "settings",
-      route: "/settings",
-      color: colors.primary,
-      desc: "Prayer & Language",
-    },
+    { icon: "star", label: t.namesOfAllah as string, route: "/names", color: colors.gold, desc: "99 Beaux Noms", emoji: "✨" },
+    { icon: "compass", label: "Qibla", route: "/qibla", color: colors.primary, desc: "Direction La Mecque", emoji: "🧭" },
+    { icon: "calendar", label: "Agenda", route: "/agenda", color: "#8B6F2D", desc: "Événements islamiques", emoji: "📅" },
+    { icon: "location", label: "Mosquées", route: "/mosques", color: colors.primary, desc: "À proximité", emoji: "🕌" },
+    { icon: "restaurant", label: "Halal", route: "/halal", color: colors.gold, desc: "Commerces certifiés", emoji: "🥩" },
+    { icon: "hand-left", label: t.duas as string, route: "/dhikr-page", color: "#7C5CBF", desc: "Douâs & Dhikr", emoji: "🤲" },
+    { icon: "settings", label: t.settings as string, route: "/settings", color: colors.mutedForeground, desc: "Langue & Calcul", emoji: "⚙️" },
   ];
 
   return (
@@ -142,7 +136,7 @@ export default function MoreScreen() {
         </View>
       </Animated.View>
 
-      {/* Feature Cards */}
+      {/* Feature Grid — 2 columns */}
       <Animated.View style={[styles.grid, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
         {features.map((feature) => (
           <TouchableOpacity
@@ -155,18 +149,9 @@ export default function MoreScreen() {
               colors={[feature.color + "18", feature.color + "06"]}
               style={StyleSheet.absoluteFill}
             />
-            <View style={[styles.featureIcon, { backgroundColor: feature.color + "22" }]}>
-              <Ionicons name={feature.icon as any} size={28} color={feature.color} />
-            </View>
-            <Text style={styles.featureLabel}>
-              {t[feature.labelKey as keyof typeof t] as string}
-            </Text>
-            <Text style={[styles.featureDesc, { color: feature.color + "AA" }]}>
-              {feature.desc}
-            </Text>
-            <View style={[styles.featureArrow, { backgroundColor: feature.color + "20" }]}>
-              <Ionicons name="arrow-forward" size={14} color={feature.color} />
-            </View>
+            <Text style={styles.featureEmoji}>{feature.emoji}</Text>
+            <Text style={styles.featureLabel}>{feature.label}</Text>
+            <Text style={[styles.featureDesc, { color: feature.color + "BB" }]}>{feature.desc}</Text>
           </TouchableOpacity>
         ))}
       </Animated.View>
@@ -228,218 +213,58 @@ function makeStyles(colors: any, topPad: number, bottomPad: number) {
       paddingBottom: bottomPad + 100,
       gap: 16,
     },
-    title: {
-      fontFamily: "Inter_700Bold",
-      fontSize: 28,
-      color: colors.foreground,
-    },
+    title: { fontFamily: "Inter_700Bold", fontSize: 28, color: colors.foreground },
     hijriCard: {
-      borderRadius: 24,
-      padding: 24,
-      overflow: "hidden",
-      shadowColor: colors.primary,
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.3,
-      shadowRadius: 20,
-      elevation: 12,
+      borderRadius: 24, padding: 24, overflow: "hidden",
+      shadowColor: colors.primary, shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.3, shadowRadius: 20, elevation: 12,
     },
-    star: {
-      position: "absolute",
-      borderRadius: 99,
-      backgroundColor: "#ffffff",
-    },
-    hijriTop: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 8,
-      marginBottom: 20,
-    },
-    hijriLabel: {
-      fontFamily: "Inter_500Medium",
-      fontSize: 13,
-      color: colors.primaryForeground,
-      opacity: 0.7,
-    },
-    hijriDateRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 20,
-    },
-    hijriDay: {
-      fontFamily: "Inter_700Bold",
-      fontSize: 80,
-      color: colors.primaryForeground,
-      lineHeight: 88,
-    },
+    star: { position: "absolute", borderRadius: 99, backgroundColor: "#ffffff" },
+    hijriTop: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 20 },
+    hijriLabel: { fontFamily: "Inter_500Medium", fontSize: 13, color: colors.primaryForeground, opacity: 0.7 },
+    hijriDateRow: { flexDirection: "row", alignItems: "center", gap: 20 },
+    hijriDay: { fontFamily: "Inter_700Bold", fontSize: 80, color: colors.primaryForeground, lineHeight: 88 },
     hijriMonthCol: { gap: 2 },
-    hijriMonthAr: {
-      fontFamily: "Inter_700Bold",
-      fontSize: 22,
-      color: colors.gold,
-    },
-    hijriMonth: {
-      fontFamily: "Inter_600SemiBold",
-      fontSize: 16,
-      color: colors.primaryForeground,
-      opacity: 0.9,
-    },
-    hijriYear: {
-      fontFamily: "Inter_400Regular",
-      fontSize: 13,
-      color: colors.primaryForeground,
-      opacity: 0.6,
-    },
-    hijriDivider: {
-      width: "100%",
-      height: 1,
-      backgroundColor: colors.primaryForeground + "20",
-      marginVertical: 18,
-    },
-    gregorianRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 7,
-    },
-    gregorianDate: {
-      fontFamily: "Inter_400Regular",
-      fontSize: 13,
-      color: colors.primaryForeground,
-      opacity: 0.7,
-    },
-    grid: {
-      flexDirection: "row",
-      gap: 12,
-    },
+    hijriMonthAr: { fontFamily: "Inter_700Bold", fontSize: 22, color: colors.gold },
+    hijriMonth: { fontFamily: "Inter_600SemiBold", fontSize: 16, color: colors.primaryForeground, opacity: 0.9 },
+    hijriYear: { fontFamily: "Inter_400Regular", fontSize: 13, color: colors.primaryForeground, opacity: 0.6 },
+    hijriDivider: { width: "100%", height: 1, backgroundColor: colors.primaryForeground + "20", marginVertical: 18 },
+    gregorianRow: { flexDirection: "row", alignItems: "center", gap: 7 },
+    gregorianDate: { fontFamily: "Inter_400Regular", fontSize: 13, color: colors.primaryForeground, opacity: 0.7 },
+    grid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
     featureCard: {
-      flex: 1,
+      width: "48%",
       backgroundColor: colors.card,
-      borderRadius: 20,
-      padding: 20,
-      alignItems: "center",
-      gap: 10,
-      borderWidth: 1,
-      borderColor: colors.border,
-      overflow: "hidden",
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.12,
-      shadowRadius: 10,
-      elevation: 4,
-    },
-    featureIcon: {
-      width: 58,
-      height: 58,
       borderRadius: 18,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    featureLabel: {
-      fontFamily: "Inter_600SemiBold",
-      fontSize: 14,
-      color: colors.foreground,
-      textAlign: "center",
-    },
-    featureDesc: {
-      fontFamily: "Inter_400Regular",
-      fontSize: 11,
-      textAlign: "center",
-    },
-    featureArrow: {
-      width: 28,
-      height: 28,
-      borderRadius: 14,
-      alignItems: "center",
-      justifyContent: "center",
-      marginTop: 4,
-    },
-    aboutCard: {
-      backgroundColor: colors.card,
-      borderRadius: 20,
-      padding: 20,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    aboutRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 14,
-    },
-    aboutIcon: {
-      width: 40,
-      height: 40,
-      borderRadius: 12,
-      alignItems: "center",
-      justifyContent: "center",
-      flexShrink: 0,
-    },
-    aboutText: { flex: 1 },
-    aboutTitle: {
-      fontFamily: "Inter_600SemiBold",
-      fontSize: 14,
-      color: colors.foreground,
-    },
-    aboutSub: {
-      fontFamily: "Inter_400Regular",
-      fontSize: 12,
-      color: colors.mutedForeground,
-      marginTop: 2,
-    },
-    aboutDivider: {
-      height: 1,
-      backgroundColor: colors.border,
-      marginVertical: 14,
-    },
-    versionRow: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-    },
-    appNameRow: { flexDirection: "row", alignItems: "baseline" },
-    appName: {
-      fontFamily: "Inter_700Bold",
-      fontSize: 16,
-      color: colors.primary,
-    },
-    appNameAr: {
-      fontFamily: "Inter_700Bold",
-      fontSize: 16,
-      color: colors.gold,
-    },
-    version: {
-      fontFamily: "Inter_400Regular",
-      fontSize: 12,
-      color: colors.mutedForeground,
-    },
-    spiRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
+      padding: 16,
+      alignItems: "flex-start",
       gap: 6,
-      paddingVertical: 4,
-    },
-    madeByText: {
-      fontFamily: "Inter_400Regular",
-      fontSize: 11,
-      color: colors.mutedForeground,
-      opacity: 0.55,
-    },
-    spiLogoWrap: {
-      width: 20,
-      height: 20,
-      borderRadius: 10,
-      overflow: "hidden",
       borderWidth: 1,
       borderColor: colors.border,
+      overflow: "hidden",
     },
-    spiLogoImg: {
-      width: 20,
-      height: 20,
+    featureEmoji: { fontSize: 24, marginBottom: 2 },
+    featureLabel: { fontFamily: "Inter_600SemiBold", fontSize: 13, color: colors.foreground },
+    featureDesc: { fontFamily: "Inter_400Regular", fontSize: 11 },
+    aboutCard: {
+      backgroundColor: colors.card, borderRadius: 20,
+      padding: 20, borderWidth: 1, borderColor: colors.border,
     },
-    spiName: {
-      fontFamily: "Inter_500Medium",
-      fontSize: 11,
-      color: colors.mutedForeground,
-      opacity: 0.65,
-    },
+    aboutRow: { flexDirection: "row", alignItems: "center", gap: 14 },
+    aboutIcon: { width: 40, height: 40, borderRadius: 12, alignItems: "center", justifyContent: "center", flexShrink: 0 },
+    aboutText: { flex: 1 },
+    aboutTitle: { fontFamily: "Inter_600SemiBold", fontSize: 14, color: colors.foreground },
+    aboutSub: { fontFamily: "Inter_400Regular", fontSize: 12, color: colors.mutedForeground, marginTop: 2 },
+    aboutDivider: { height: 1, backgroundColor: colors.border, marginVertical: 14 },
+    versionRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+    appNameRow: { flexDirection: "row", alignItems: "baseline" },
+    appName: { fontFamily: "Inter_700Bold", fontSize: 16, color: colors.primary },
+    appNameAr: { fontFamily: "Inter_700Bold", fontSize: 16, color: colors.gold },
+    version: { fontFamily: "Inter_400Regular", fontSize: 12, color: colors.mutedForeground },
+    spiRow: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingVertical: 4 },
+    madeByText: { fontFamily: "Inter_400Regular", fontSize: 11, color: colors.mutedForeground, opacity: 0.55 },
+    spiLogoWrap: { width: 20, height: 20, borderRadius: 10, overflow: "hidden", borderWidth: 1, borderColor: colors.border },
+    spiLogoImg: { width: 20, height: 20 },
+    spiName: { fontFamily: "Inter_500Medium", fontSize: 11, color: colors.mutedForeground, opacity: 0.65 },
   });
 }
