@@ -162,6 +162,8 @@ export default function SearchScreen() {
             style={styles.item}
             onPress={() => router.push(item.route as any)}
             activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel={`${item.title}, ${item.subtitle}`}
           >
             <View style={[styles.itemIcon, { backgroundColor: item.color + "1A" }]}>
               <Ionicons name={item.icon as any} size={18} color={item.color} />

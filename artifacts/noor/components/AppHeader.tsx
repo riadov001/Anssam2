@@ -77,6 +77,8 @@ export function AppHeader({ subtitle, hideSearch }: AppHeaderProps) {
             ]}
             onPress={() => router.push("/search" as any)}
             activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel="Ouvrir la recherche"
           >
             <Ionicons name="search" size={18} color={colors.primary} />
           </TouchableOpacity>
@@ -92,6 +94,8 @@ export function AppHeader({ subtitle, hideSearch }: AppHeaderProps) {
           ]}
           onPress={() => router.push("/search" as any)}
           activeOpacity={0.75}
+          accessibilityRole="search"
+          accessibilityLabel="Rechercher dans toute l'application"
         >
           <Ionicons name="search-outline" size={16} color={colors.mutedForeground} />
           <Text style={[styles.searchPlaceholder, { color: colors.mutedForeground }]}>

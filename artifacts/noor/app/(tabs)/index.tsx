@@ -280,7 +280,7 @@ function makeStyles(colors: any, topPad: number, bottomPad: number) {
     container: { flex: 1, backgroundColor: colors.background },
     scroll: { flex: 1 },
     scrollContent: {
-      paddingTop: topPad + 16,
+      paddingTop: 12,
       paddingHorizontal: 20,
       paddingBottom: bottomPad + 100,
     },

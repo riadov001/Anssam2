@@ -187,7 +187,7 @@ export default function VideosScreen() {
 
 function makeStyles(colors: any, topPad: number, bottomPad: number) {
   return StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.background, paddingTop: topPad + 16 },
+    container: { flex: 1, backgroundColor: colors.background },
     title: { fontFamily: "Inter_700Bold", fontSize: 26, color: colors.foreground, paddingHorizontal: 20, marginBottom: 14 },
     filterScroll: { paddingLeft: 20, marginBottom: 8 },
     filterRow: { flexDirection: "row", gap: 8, paddingRight: 20, paddingVertical: 4 },

@@ -231,7 +231,7 @@ export default function AiScreen() {
 
 function makeStyles(colors: any, topPad: number, bottomPad: number) {
   return StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.background, paddingTop: topPad },
+    container: { flex: 1, backgroundColor: colors.background },
     modeBg: { position: "absolute", top: 0, left: 0, right: 0, height: 300 },
     modeTitle: { fontFamily: "Inter_700Bold", fontSize: 26, color: colors.foreground, textAlign: "center", marginTop: 24, paddingHorizontal: 20 },
     modeSubtitle: { fontFamily: "Inter_400Regular", fontSize: 13, color: colors.mutedForeground, textAlign: "center", paddingHorizontal: 30, marginTop: 6 },
