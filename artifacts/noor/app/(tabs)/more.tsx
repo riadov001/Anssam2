@@ -32,6 +32,15 @@ const ISLAMIC_MONTHS_AR = [
   "رَمَضَان", "شَوَّال", "ذُو القَعْدَة", "ذُو الحِجَّة",
 ];
 
+const STAR_POSITIONS = [
+  { top: "15%", left: "10%", size: 3, opacity: 0.6 },
+  { top: "40%", left: "80%", size: 2, opacity: 0.4 },
+  { top: "20%", left: "50%", size: 4, opacity: 0.8 },
+  { top: "65%", left: "25%", size: 2, opacity: 0.5 },
+  { top: "10%", left: "75%", size: 3, opacity: 0.3 },
+  { top: "55%", left: "60%", size: 2, opacity: 0.7 },
+];
+
 export default function MoreScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
@@ -84,7 +93,7 @@ export default function MoreScreen() {
     >
       <Text style={styles.title}>{t.moreTitle}</Text>
 
-      {/* Hijri Calendar Hero Card */}
+      {/* Hijri Calendar Hero */}
       <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
         <View style={styles.hijriCard}>
           <LinearGradient
@@ -92,33 +101,26 @@ export default function MoreScreen() {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={StyleSheet.absoluteFill}
-            borderRadius={24}
           />
-
-          {/* Stars decoration */}
-          <View style={styles.stars}>
-            {[...Array(6)].map((_, i) => (
-              <View
-                key={i}
-                style={[
-                  styles.star,
-                  {
-                    top: `${[15, 40, 20, 65, 10, 55][i]}%` as any,
-                    left: `${[10, 80, 50, 25, 75, 60][i]}%` as any,
-                    width: [3, 2, 4, 2, 3, 2][i],
-                    height: [3, 2, 4, 2, 3, 2][i],
-                    opacity: [0.6, 0.4, 0.8, 0.5, 0.3, 0.7][i],
-                  },
-                ]}
-              />
-            ))}
-          </View>
-
+          {STAR_POSITIONS.map((star, i) => (
+            <View
+              key={i}
+              style={[
+                styles.star,
+                {
+                  top: star.top as any,
+                  left: star.left as any,
+                  width: star.size,
+                  height: star.size,
+                  opacity: star.opacity,
+                },
+              ]}
+            />
+          ))}
           <View style={styles.hijriTop}>
             <Ionicons name="calendar-outline" size={20} color={colors.gold + "CC"} />
             <Text style={styles.hijriLabel}>{t.hijriCalendar}</Text>
           </View>
-
           <View style={styles.hijriDateRow}>
             <Text style={styles.hijriDay}>{hijri.day}</Text>
             <View style={styles.hijriMonthCol}>
@@ -127,16 +129,12 @@ export default function MoreScreen() {
               <Text style={styles.hijriYear}>{hijri.year} AH</Text>
             </View>
           </View>
-
           <View style={styles.hijriDivider} />
           <View style={styles.gregorianRow}>
             <Ionicons name="today-outline" size={14} color={colors.primaryForeground} style={{ opacity: 0.6 }} />
             <Text style={styles.gregorianDate}>
               {now.toLocaleDateString([], {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-                year: "numeric",
+                weekday: "long", day: "numeric", month: "long", year: "numeric",
               })}
             </Text>
           </View>
@@ -144,73 +142,66 @@ export default function MoreScreen() {
       </Animated.View>
 
       {/* Feature Cards */}
-      <View style={styles.grid}>
-        {features.map((feature, idx) => (
-          <Animated.View
+      <Animated.View style={[styles.grid, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
+        {features.map((feature) => (
+          <TouchableOpacity
             key={feature.route}
-            style={{
-              flex: 1,
-              opacity: fadeAnim,
-              transform: [{ translateY: Animated.multiply(slideAnim, new Animated.Value(1 + idx * 0.3)) }],
-            }}
+            style={styles.featureCard}
+            onPress={() => router.push(feature.route as any)}
+            activeOpacity={0.75}
           >
-            <TouchableOpacity
-              style={styles.featureCard}
-              onPress={() => router.push(feature.route as any)}
-              activeOpacity={0.75}
-            >
-              <LinearGradient
-                colors={[feature.color + "18", feature.color + "06"]}
-                style={StyleSheet.absoluteFill}
-                borderRadius={20}
-              />
-              <View style={[styles.featureIcon, { backgroundColor: feature.color + "22" }]}>
-                <Ionicons name={feature.icon as any} size={28} color={feature.color} />
-              </View>
-              <Text style={styles.featureLabel}>
-                {t[feature.labelKey as keyof typeof t] as string}
-              </Text>
-              <Text style={[styles.featureDesc, { color: feature.color + "AA" }]}>
-                {feature.desc}
-              </Text>
-              <View style={[styles.featureArrow, { backgroundColor: feature.color + "20" }]}>
-                <Ionicons name="arrow-forward" size={14} color={feature.color} />
-              </View>
-            </TouchableOpacity>
-          </Animated.View>
+            <LinearGradient
+              colors={[feature.color + "18", feature.color + "06"]}
+              style={StyleSheet.absoluteFill}
+            />
+            <View style={[styles.featureIcon, { backgroundColor: feature.color + "22" }]}>
+              <Ionicons name={feature.icon as any} size={28} color={feature.color} />
+            </View>
+            <Text style={styles.featureLabel}>
+              {t[feature.labelKey as keyof typeof t] as string}
+            </Text>
+            <Text style={[styles.featureDesc, { color: feature.color + "AA" }]}>
+              {feature.desc}
+            </Text>
+            <View style={[styles.featureArrow, { backgroundColor: feature.color + "20" }]}>
+              <Ionicons name="arrow-forward" size={14} color={feature.color} />
+            </View>
+          </TouchableOpacity>
         ))}
-      </View>
+      </Animated.View>
 
       {/* About Card */}
-      <View style={styles.aboutCard}>
-        <View style={styles.aboutRow}>
-          <View style={[styles.aboutIcon, { backgroundColor: colors.primary + "20" }]}>
-            <Ionicons name="shield-checkmark" size={18} color={colors.primary} />
+      <Animated.View style={{ opacity: fadeAnim }}>
+        <View style={styles.aboutCard}>
+          <View style={styles.aboutRow}>
+            <View style={[styles.aboutIcon, { backgroundColor: colors.primary + "20" }]}>
+              <Ionicons name="shield-checkmark" size={18} color={colors.primary} />
+            </View>
+            <View style={styles.aboutText}>
+              <Text style={styles.aboutTitle}>{t.privacyFirst}</Text>
+              <Text style={styles.aboutSub}>{t.noDataCollection}</Text>
+            </View>
           </View>
-          <View style={styles.aboutText}>
-            <Text style={styles.aboutTitle}>{t.privacyFirst}</Text>
-            <Text style={styles.aboutSub}>{t.noDataCollection}</Text>
+          <View style={styles.aboutDivider} />
+          <View style={styles.aboutRow}>
+            <View style={[styles.aboutIcon, { backgroundColor: colors.gold + "20" }]}>
+              <Ionicons name="gift" size={18} color={colors.gold} />
+            </View>
+            <View style={styles.aboutText}>
+              <Text style={styles.aboutTitle}>{t.free}</Text>
+              <Text style={styles.aboutSub}>{t.alwaysFree}</Text>
+            </View>
+          </View>
+          <View style={styles.aboutDivider} />
+          <View style={styles.versionRow}>
+            <View style={styles.appNameRow}>
+              <Text style={styles.appName}>Noor</Text>
+              <Text style={styles.appNameAr}> — نور</Text>
+            </View>
+            <Text style={styles.version}>{t.appVersion}</Text>
           </View>
         </View>
-        <View style={styles.aboutDivider} />
-        <View style={styles.aboutRow}>
-          <View style={[styles.aboutIcon, { backgroundColor: colors.gold + "20" }]}>
-            <Ionicons name="gift" size={18} color={colors.gold} />
-          </View>
-          <View style={styles.aboutText}>
-            <Text style={styles.aboutTitle}>{t.free}</Text>
-            <Text style={styles.aboutSub}>{t.alwaysFree}</Text>
-          </View>
-        </View>
-        <View style={styles.aboutDivider} />
-        <View style={styles.versionRow}>
-          <View style={styles.appNameRow}>
-            <Text style={styles.appName}>Noor</Text>
-            <Text style={styles.appNameAr}> — نور</Text>
-          </View>
-          <Text style={styles.version}>{t.appVersion}</Text>
-        </View>
-      </View>
+      </Animated.View>
     </ScrollView>
   );
 }
@@ -239,7 +230,6 @@ function makeStyles(colors: any, topPad: number, bottomPad: number) {
       shadowRadius: 20,
       elevation: 12,
     },
-    stars: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
     star: {
       position: "absolute",
       borderRadius: 99,
@@ -256,7 +246,6 @@ function makeStyles(colors: any, topPad: number, bottomPad: number) {
       fontSize: 13,
       color: colors.primaryForeground,
       opacity: 0.7,
-      letterSpacing: 0.5,
     },
     hijriDateRow: {
       flexDirection: "row",

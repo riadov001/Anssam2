@@ -33,15 +33,6 @@ const PRAYER_ICONS: Record<PrayerName, string> = {
   isha: "moon",
 };
 
-const PRAYER_GRADIENTS: Record<PrayerName, [string, string]> = {
-  fajr: ["#1A3A5C", "#0D1B14"],
-  sunrise: ["#5C3A1A", "#0D1B14"],
-  dhuhr: ["#1A5C3A", "#0D1B14"],
-  asr: ["#1A3A5C", "#0D1B14"],
-  maghrib: ["#5C1A3A", "#0D1B14"],
-  isha: ["#1A1A5C", "#0D1B14"],
-};
-
 export default function PrayerScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
@@ -53,7 +44,6 @@ export default function PrayerScreen() {
   const [now, setNow] = useState(new Date());
   const [refreshing, setRefreshing] = useState(false);
 
-  const pulseAnim = useRef(new Animated.Value(1)).current;
   const dotAnim = useRef(new Animated.Value(1)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -72,8 +62,8 @@ export default function PrayerScreen() {
   useEffect(() => {
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(dotAnim, { toValue: 0.3, duration: 800, useNativeDriver: true }),
-        Animated.timing(dotAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+        Animated.timing(dotAnim, { toValue: 0.25, duration: 900, useNativeDriver: true }),
+        Animated.timing(dotAnim, { toValue: 1, duration: 900, useNativeDriver: true }),
       ])
     );
     loop.start();
@@ -90,27 +80,21 @@ export default function PrayerScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    if (calculate) await calculate();
-    setRefreshing(false);
+    if (calculate) calculate();
+    setTimeout(() => setRefreshing(false), 1200);
   }, [calculate]);
 
   const hijri = toHijri(now);
   const hijriMonth = t.hijriMonths[hijri.month - 1] || "";
-
   const styles = makeStyles(colors, topPad, bottomPad);
-
-  const gradientColors = nextPrayer
-    ? PRAYER_GRADIENTS[nextPrayer.name]
-    : ([colors.primary + "40", colors.background] as [string, string]);
-
   const getPrayerLabel = (name: PrayerName): string => t[name] || name;
 
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={[gradientColors[0], gradientColors[1], colors.background]}
+        colors={[colors.primary + "35", colors.background, colors.background]}
         start={{ x: 0, y: 0 }}
-        end={{ x: 0.6, y: 1 }}
+        end={{ x: 0.6, y: 0.7 }}
         style={StyleSheet.absoluteFill}
       />
       <Animated.View style={[{ flex: 1 }, { opacity: fadeAnim }]}>
@@ -175,7 +159,6 @@ export default function PrayerScreen() {
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={StyleSheet.absoluteFill}
-                    borderRadius={24}
                   />
                   <View style={styles.nextCardInner}>
                     <View style={styles.nextLabelRow}>
@@ -185,11 +168,7 @@ export default function PrayerScreen() {
                     <Text style={styles.nextPrayerName}>
                       {getPrayerLabel(nextPrayer.name)}
                     </Text>
-                    <Animated.Text
-                      style={[styles.countdown, { transform: [{ scale: pulseAnim }] }]}
-                    >
-                      {countdown}
-                    </Animated.Text>
+                    <Text style={styles.countdown}>{countdown}</Text>
                     <View style={styles.nextTimePill}>
                       <Ionicons
                         name={PRAYER_ICONS[nextPrayer.name] as any}
@@ -218,7 +197,7 @@ export default function PrayerScreen() {
                     >
                       {isNext && (
                         <LinearGradient
-                          colors={[colors.primary + "25", "transparent"]}
+                          colors={[colors.primary + "28", "transparent"]}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 1, y: 0 }}
                           style={StyleSheet.absoluteFill}
@@ -271,7 +250,6 @@ export default function PrayerScreen() {
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={StyleSheet.absoluteFill}
-                  borderRadius={20}
                 />
                 <View style={styles.qiblaContent}>
                   <View style={styles.qiblaIconWrap}>
@@ -393,6 +371,7 @@ function makeStyles(colors: any, topPad: number, bottomPad: number) {
       shadowOpacity: 0.25,
       shadowRadius: 16,
       elevation: 10,
+      backgroundColor: colors.card,
     },
     nextCardInner: { alignItems: "center", gap: 6 },
     nextLabelRow: {
@@ -517,6 +496,7 @@ function makeStyles(colors: any, topPad: number, bottomPad: number) {
       borderWidth: 1,
       borderColor: colors.gold + "30",
       overflow: "hidden",
+      backgroundColor: colors.card,
       shadowColor: colors.gold,
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.12,

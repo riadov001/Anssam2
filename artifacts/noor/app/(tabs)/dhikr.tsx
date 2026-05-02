@@ -53,7 +53,6 @@ export default function DhikrScreen() {
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
-  const glowAnim = useRef(new Animated.Value(0)).current;
   const progressAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
@@ -79,9 +78,8 @@ export default function DhikrScreen() {
         Animated.timing(pulseAnim, { toValue: 0.95, duration: 150, useNativeDriver: true }),
         Animated.timing(pulseAnim, { toValue: 1, duration: 200, useNativeDriver: true }),
       ]).start();
-      Animated.timing(glowAnim, { toValue: 1, duration: 400, useNativeDriver: false }).start();
     }
-  }, [count, selectedPreset.target, completed, pulseAnim, glowAnim, isWeb]);
+  }, [count, selectedPreset.target, completed, pulseAnim, isWeb]);
 
   const handlePress = useCallback(() => {
     if (count >= selectedPreset.target) return;
@@ -99,27 +97,27 @@ export default function DhikrScreen() {
       setCount(0);
       setCompleted(false);
       progressAnim.setValue(0);
-      glowAnim.setValue(0);
       Animated.timing(fadeAnim, { toValue: 1, duration: 200, useNativeDriver: true }).start();
     });
-  }, [fadeAnim, progressAnim, glowAnim, isWeb]);
+  }, [fadeAnim, progressAnim, isWeb]);
 
   const selectPreset = useCallback((preset: Preset) => {
     setSelectedPreset(preset);
     setCount(0);
     setCompleted(false);
     progressAnim.setValue(0);
-    glowAnim.setValue(0);
-  }, [progressAnim, glowAnim]);
+  }, [progressAnim]);
 
   const strokeDashoffset = progressAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [RING_CIRCUMFERENCE, 0],
   });
 
-  const glowOpacity = glowAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 0.6] });
-
   const styles = makeStyles(colors, topPad, bottomPad);
+
+  const tapGradientColors: [string, string] = completed
+    ? ["#4ADE8070", "#4ADE8030"]
+    : [selectedPreset.color, selectedPreset.color + "CC"];
 
   return (
     <View style={styles.container}>
@@ -163,7 +161,10 @@ export default function DhikrScreen() {
                 onPress={() => selectPreset(preset)}
                 activeOpacity={0.7}
               >
-                <Text style={[styles.presetLabel, active && { color: preset.color, fontFamily: "Inter_600SemiBold" }]}>
+                <Text style={[
+                  styles.presetLabel,
+                  active && { color: preset.color, fontFamily: "Inter_600SemiBold" },
+                ]}>
                   {String(t[preset.key as keyof typeof t] ?? preset.key)}
                 </Text>
               </TouchableOpacity>
@@ -176,9 +177,8 @@ export default function DhikrScreen() {
           <LinearGradient
             colors={[selectedPreset.color + "20", selectedPreset.color + "08"]}
             style={StyleSheet.absoluteFill}
-            borderRadius={20}
           />
-          <Text style={[styles.arabicDhikr, { color: selectedPreset.color === colors.gold ? colors.gold : selectedPreset.color }]}>
+          <Text style={[styles.arabicDhikr, { color: selectedPreset.color }]}>
             {selectedPreset.arabic}
           </Text>
           <Text style={styles.transliteration}>{selectedPreset.transliteration}</Text>
@@ -186,7 +186,6 @@ export default function DhikrScreen() {
 
         {/* SVG Progress Ring */}
         <Animated.View style={[styles.ringContainer, { transform: [{ scale: pulseAnim }] }]}>
-          <Animated.View style={[styles.ringGlow, { opacity: glowOpacity, shadowColor: selectedPreset.color }]} />
           <Svg width={210} height={210} style={styles.svgRing}>
             <Circle
               cx={105}
@@ -226,11 +225,7 @@ export default function DhikrScreen() {
         <Pressable onPress={handlePress} disabled={completed}>
           <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
             <LinearGradient
-              colors={
-                completed
-                  ? ["#4ADE8060", "#4ADE8030"]
-                  : [selectedPreset.color, selectedPreset.color + "CC"]
-              }
+              colors={tapGradientColors}
               style={styles.tapButton}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
@@ -323,6 +318,7 @@ function makeStyles(colors: any, topPad: number, bottomPad: number) {
       borderColor: colors.border,
       overflow: "hidden",
       gap: 8,
+      backgroundColor: colors.card,
     },
     arabicDhikr: {
       fontFamily: "Inter_700Bold",
@@ -343,16 +339,6 @@ function makeStyles(colors: any, topPad: number, bottomPad: number) {
       alignItems: "center",
       justifyContent: "center",
       marginBottom: 24,
-    },
-    ringGlow: {
-      position: "absolute",
-      width: 180,
-      height: 180,
-      borderRadius: 90,
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.6,
-      shadowRadius: 30,
-      elevation: 0,
     },
     svgRing: {
       position: "absolute",

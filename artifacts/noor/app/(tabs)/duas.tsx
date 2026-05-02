@@ -79,17 +79,12 @@ function DuaCard({ item, isExpanded, onToggle, translation, colors, isWeb }: Dua
       {isExpanded && (
         <LinearGradient
           colors={[colors.primary + "12", "transparent"]}
-          style={StyleSheet.absoluteFill}
-          borderRadius={18}
+          style={[StyleSheet.absoluteFill, { borderRadius: 18 }]}
         />
       )}
-
-      {/* Arabic */}
       <Text style={cardStyles.arabic}>{item.arabic}</Text>
-
-      {/* Expanded Details */}
       {isExpanded && (
-        <Animated.View style={cardStyles.details}>
+        <View>
           <View style={cardStyles.divider} />
           <Text style={cardStyles.transliteration}>{item.transliteration}</Text>
           <View style={cardStyles.divider} />
@@ -100,9 +95,8 @@ function DuaCard({ item, isExpanded, onToggle, translation, colors, isWeb }: Dua
               <Text style={cardStyles.source}>{item.source}</Text>
             </View>
           </View>
-        </Animated.View>
+        </View>
       )}
-
       <View style={cardStyles.chevronRow}>
         <Ionicons
           name={isExpanded ? "chevron-up" : "chevron-down"}
@@ -140,7 +134,6 @@ function makeCardStyles(colors: any) {
       lineHeight: 38,
       writingDirection: "rtl",
     },
-    details: {},
     divider: {
       height: 1,
       backgroundColor: colors.border,
@@ -159,9 +152,7 @@ function makeCardStyles(colors: any) {
       color: colors.foreground,
       lineHeight: 23,
     },
-    footer: {
-      marginTop: 12,
-    },
+    footer: { marginTop: 12 },
     sourceRow: {
       flexDirection: "row",
       alignItems: "center",
@@ -192,7 +183,6 @@ export default function DuasScreen() {
 
   const filteredDuas = DUAS.filter((d) => d.category === selected);
   const catColor = CATEGORY_COLORS[selected];
-
   const styles = makeStyles(colors, topPad, bottomPad);
 
   const getTranslation = useCallback((dua: Dua): string => {
@@ -218,17 +208,13 @@ export default function DuasScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <View style={styles.titleRow}>
           <Text style={styles.title}>{t.duasTitle}</Text>
           <View style={[styles.countBadge, { backgroundColor: catColor + "20" }]}>
-            <Text style={[styles.countText, { color: catColor }]}>
-              {filteredDuas.length}
-            </Text>
+            <Text style={[styles.countText, { color: catColor }]}>{filteredDuas.length}</Text>
           </View>
         </View>
-
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -252,8 +238,11 @@ export default function DuasScreen() {
                   size={14}
                   color={active ? cc : colors.mutedForeground}
                 />
-                <Text style={[styles.catLabel, active && { color: cc, fontFamily: "Inter_600SemiBold" }]}>
-                  {String(t[cat] ?? cat)}
+                <Text style={[
+                  styles.catLabel,
+                  active && { color: cc, fontFamily: "Inter_600SemiBold" },
+                ]}>
+                  {String(t[cat as keyof typeof t] ?? cat)}
                 </Text>
               </TouchableOpacity>
             );

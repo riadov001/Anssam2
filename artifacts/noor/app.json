@@ -1,29 +1,79 @@
 {
   "expo": {
-    "name": "Noor — Islamic App",
+    "name": "Noor — نور",
     "slug": "noor",
     "version": "1.0.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "noor",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
+    "backgroundColor": "#0D1B14",
+    "primaryColor": "#2D8B6F",
+    "description": "Noor is a premium Islamic companion app featuring accurate prayer times, the full Holy Quran with translations, Qibla direction, Tasbih counter, 99 Names of Allah, daily duas, Hijri calendar, and multi-language support. No account needed. No ads. No data collection.",
     "splash": {
       "image": "./assets/images/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#0D1B14"
     },
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": false,
+      "bundleIdentifier": "com.noorislamicapp.noor",
+      "buildNumber": "1",
+      "deploymentTarget": "16.0",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Noor needs your location to calculate accurate prayer times and Qibla direction for your area."
+        "NSLocationWhenInUseUsageDescription": "Noor uses your location only to calculate accurate prayer times and Qibla direction. Your location is never stored or shared.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Noor uses your location only to calculate accurate prayer times and Qibla direction. Your location is never stored or shared.",
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": [],
+        "CFBundleLocalizations": ["en", "ar", "fr", "tr"],
+        "CFBundleDevelopmentRegion": "en",
+        "NSPrivacyTracking": false
+      },
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryFileTimestamp",
+            "NSPrivacyAccessedAPITypeReasons": ["C617.1"]
+          }
+        ],
+        "NSPrivacyCollectedDataTypes": [],
+        "NSPrivacyTracking": false,
+        "NSPrivacyTrackingDomains": []
       }
     },
     "android": {
-      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+      "package": "com.noorislamicapp.noor",
+      "versionCode": 1,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#0D1B14"
+      },
+      "allowBackup": false,
+      "blockedPermissions": [
+        "RECORD_AUDIO",
+        "READ_CONTACTS",
+        "WRITE_CONTACTS",
+        "READ_CALENDAR",
+        "WRITE_CALENDAR",
+        "CAMERA"
+      ]
     },
     "web": {
-      "favicon": "./assets/images/icon.png"
+      "favicon": "./assets/images/icon.png",
+      "bundler": "metro"
     },
     "plugins": [
       [
@@ -37,7 +87,9 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Noor needs your location to calculate accurate prayer times and Qibla direction."
+          "locationWhenInUsePermission": "Noor uses your location only to calculate accurate prayer times and Qibla direction. Your location is never stored or shared.",
+          "isIosBackgroundLocationEnabled": false,
+          "isAndroidBackgroundLocationEnabled": false
         }
       ]
     ],

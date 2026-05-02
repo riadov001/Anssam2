@@ -24,6 +24,7 @@ export interface PrayerTimesState {
   latitude: number;
   longitude: number;
   qiblaDirection: number;
+  calculate?: () => void;
 }
 
 function getAdhanParams(method: string, adhan: any): any {
@@ -164,7 +165,23 @@ export function usePrayerTimes(): PrayerTimesState {
     })();
   }, [calculate]);
 
-  return state;
+  const refresh = useCallback(() => {
+    if (Platform.OS === "web") {
+      if (typeof navigator !== "undefined" && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => calculate(pos.coords.latitude, pos.coords.longitude, "Your Location"),
+          () => calculate(DEFAULT_LAT, DEFAULT_LON, DEFAULT_CITY),
+          { timeout: 8000 }
+        );
+      } else {
+        calculate(DEFAULT_LAT, DEFAULT_LON, DEFAULT_CITY);
+      }
+    } else {
+      calculate(state.latitude || DEFAULT_LAT, state.longitude || DEFAULT_LON, state.city || DEFAULT_CITY);
+    }
+  }, [calculate, state.latitude, state.longitude, state.city]);
+
+  return { ...state, calculate: refresh };
 }
 
 export function toHijri(date: Date): {
