@@ -45,7 +45,7 @@ export default function DashboardPage() {
       href: "/events",
     },
     {
-      label: "Conversations IA Nour",
+      label: "Conversations IA Anssam",
       value: stats?.aiConversations ?? "—",
       icon: MessageSquare,
       color: "purple",

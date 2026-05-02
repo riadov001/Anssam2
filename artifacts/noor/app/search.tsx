@@ -31,7 +31,7 @@ interface SearchResult {
 const SCREENS: Omit<SearchResult, "color">[] = [
   { kind: "screen", title: "Heures de prière", subtitle: "Salat, Qibla & calcul",        icon: "time-outline",      route: "/(tabs)/" },
   { kind: "screen", title: "Coran",            subtitle: "114 sourates",                  icon: "book-outline",      route: "/(tabs)/quran" },
-  { kind: "screen", title: "Nour IA",          subtitle: "Assistant islamique",           icon: "sparkles-outline",  route: "/(tabs)/ai" },
+  { kind: "screen", title: "Anssam IA",        subtitle: "Assistant islamique",           icon: "sparkles-outline",  route: "/(tabs)/ai" },
   { kind: "screen", title: "Vidéos",           subtitle: "Apprendre en regardant",        icon: "play-circle-outline", route: "/(tabs)/videos" },
   { kind: "screen", title: "Tasbih / Dhikr",   subtitle: "Compteur & invocations",        icon: "infinite-outline",  route: "/(tabs)/dhikr" },
   { kind: "screen", title: "Douâs",            subtitle: "Invocations du quotidien",      icon: "hand-left-outline", route: "/(tabs)/duas" },

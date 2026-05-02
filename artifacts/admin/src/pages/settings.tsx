@@ -30,7 +30,7 @@ const DEFS: SettingDef[] = [
   },
   {
     key: "ai_enabled",
-    label: "Activer Nour IA",
+    label: "Activer Anssam IA",
     description: "Permettre aux utilisateurs d'utiliser l'assistant IA islamique",
     type: "boolean",
     defaultValue: true,
@@ -66,7 +66,7 @@ const DEFS: SettingDef[] = [
   {
     key: "ai_max_messages_per_day",
     label: "Messages IA max par jour",
-    description: "Limite quotidienne par utilisateur pour Nour IA",
+    description: "Limite quotidienne par utilisateur pour Anssam IA",
     type: "number",
     defaultValue: 50,
   },

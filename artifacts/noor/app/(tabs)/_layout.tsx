@@ -26,7 +26,7 @@ function NativeTabLayout() {
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="ai">
         <Icon sf={{ default: "sparkles", selected: "sparkles" }} />
-        <Label>Nour IA</Label>
+        <Label>Anssam IA</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="videos">
         <Icon sf={{ default: "play.rectangle", selected: "play.rectangle.fill" }} />
@@ -102,7 +102,7 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="ai"
         options={{
-          title: "Nour IA",
+          title: "Anssam IA",
           tabBarIcon: ({ color }) =>
             isIOS ? (
               <SymbolView name="sparkles" tintColor={color} size={24} />

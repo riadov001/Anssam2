@@ -35,10 +35,10 @@ interface Message {
 }
 
 const WELCOME_MESSAGES: Record<string, string> = {
-  general: "Assalam alaykoum ! Je suis Nour, votre assistant islamique. Comment puis-je vous aider aujourd'hui ? 🌙",
+  general: "Assalam alaykoum ! Je suis Anssam, votre assistant islamique. Comment puis-je vous aider aujourd'hui ? 🌙",
   prayer: "Assalam alaykoum ! Je vais vous aider à apprendre la prière pas à pas. Par quoi voulez-vous commencer ? Les conditions ? La Fatiha ? Les mouvements ? 🕌",
   quran: "Assalam alaykoum ! Je suis votre professeur de Coran. Voulez-vous commencer par Al-Fatiha, ou avez-vous une sourate en tête ? 📖",
-  children: "Salam ! Moi c'est Nour, ton ami musulman ! 🌟 Tu veux qu'on apprenne ensemble ? On peut parler des prophètes, des 5 piliers, ou des bonnes valeurs ! 😊🕌",
+  children: "Salam ! Moi c'est Anssam, ton ami musulman ! 🌟 Tu veux qu'on apprenne ensemble ? On peut parler des prophètes, des 5 piliers, ou des bonnes valeurs ! 😊🕌",
 };
 
 export default function AiScreen() {
@@ -143,13 +143,13 @@ export default function AiScreen() {
   if (showModes) {
     return (
       <View style={styles.container}>
-        <AppHeader subtitle="Nour · Assistant IA islamique" />
+        <AppHeader subtitle="Anssam · Assistant IA islamique" />
         <LinearGradient colors={[colors.primary + "30", "transparent"]} style={styles.modeBg} />
-        <Text style={styles.modeTitle}>Nour — IA Islamique</Text>
+        <Text style={styles.modeTitle}>Anssam — IA Islamique</Text>
         <Text style={styles.modeSubtitle}>
           Votre assistant intelligent pour apprendre et pratiquer l'islam
         </Text>
-        <Text style={styles.nourAr}>نـور</Text>
+        <Text style={styles.nourAr}>أنسام</Text>
         <View style={styles.modeGrid}>
           {MODES.map((m) => (
             <TouchableOpacity key={m.key} style={styles.modeCard} onPress={() => startConversation(m.key)} activeOpacity={0.8}>
@@ -175,7 +175,7 @@ export default function AiScreen() {
           <Ionicons name="arrow-back" size={20} color={colors.foreground} />
         </TouchableOpacity>
         <View style={styles.chatHeaderCenter}>
-          <Text style={styles.chatHeaderTitle}>Nour</Text>
+          <Text style={styles.chatHeaderTitle}>Anssam</Text>
           <Text style={styles.chatHeaderSub}>{MODES.find((m) => m.key === mode)?.label} · IA Islamique</Text>
         </View>
         <View style={styles.nourDot} />
@@ -200,7 +200,7 @@ export default function AiScreen() {
         {sending && messages[messages.length - 1]?.content === "" && (
           <View style={styles.typingIndicator}>
             <ActivityIndicator size="small" color={colors.primary} />
-            <Text style={styles.typingText}>Nour réfléchit…</Text>
+            <Text style={styles.typingText}>Anssam réfléchit…</Text>
           </View>
         )}
       </ScrollView>
