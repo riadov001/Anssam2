@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
+  Image,
   Platform,
   ScrollView,
   StyleSheet,
@@ -202,6 +203,18 @@ export default function MoreScreen() {
           </View>
         </View>
       </Animated.View>
+
+      {/* SPI Attribution */}
+      <Animated.View style={[styles.spiRow, { opacity: fadeAnim }]}>
+        <Text style={styles.madeByText}>Made by</Text>
+        <View style={styles.spiLogoWrap}>
+          <Image
+            source={require("../../assets/images/spi-logo.jpg")}
+            style={styles.spiLogoImg}
+          />
+        </View>
+        <Text style={styles.spiName}>Straight Path Intelligence</Text>
+      </Animated.View>
     </ScrollView>
   );
 }
@@ -396,6 +409,37 @@ function makeStyles(colors: any, topPad: number, bottomPad: number) {
       fontFamily: "Inter_400Regular",
       fontSize: 12,
       color: colors.mutedForeground,
+    },
+    spiRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
+      paddingVertical: 4,
+    },
+    madeByText: {
+      fontFamily: "Inter_400Regular",
+      fontSize: 11,
+      color: colors.mutedForeground,
+      opacity: 0.55,
+    },
+    spiLogoWrap: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      overflow: "hidden",
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    spiLogoImg: {
+      width: 20,
+      height: 20,
+    },
+    spiName: {
+      fontFamily: "Inter_500Medium",
+      fontSize: 11,
+      color: colors.mutedForeground,
+      opacity: 0.65,
     },
   });
 }
