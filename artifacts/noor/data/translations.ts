@@ -74,7 +74,7 @@ const en = {
   namesOfAllah: "99 Names",
   hijriCalendar: "Hijri Calendar",
   settings: "Settings",
-  about: "About Noor",
+  about: "About Anssam",
 
   // Names screen
   namesTitle: "99 Names of Allah",
@@ -196,7 +196,7 @@ const ar: typeof en = {
   namesOfAllah: "٩٩ اسماً",
   hijriCalendar: "التقويم الهجري",
   settings: "الإعدادات",
-  about: "عن نور",
+  about: "عن أنسام",
 
   namesTitle: "أسماء الله الحسنى",
   asmaUlHusna: "الأسماء الحسنى",
@@ -315,7 +315,7 @@ const fr: typeof en = {
   namesOfAllah: "99 Noms",
   hijriCalendar: "Calendrier Hégirien",
   settings: "Paramètres",
-  about: "À propos de Noor",
+  about: "À propos d'Anssam",
 
   namesTitle: "Les 99 Noms d'Allah",
   asmaUlHusna: "Al-Asma ul-Husna",
@@ -434,7 +434,7 @@ const tr: typeof en = {
   namesOfAllah: "99 İsim",
   hijriCalendar: "Hicri Takvim",
   settings: "Ayarlar",
-  about: "Noor Hakkında",
+  about: "Anssam Hakkında",
 
   namesTitle: "Allah'ın 99 İsmi",
   asmaUlHusna: "Esmaü'l-Hüsna",

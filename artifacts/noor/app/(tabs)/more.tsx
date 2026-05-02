@@ -196,8 +196,8 @@ export default function MoreScreen() {
           <View style={styles.aboutDivider} />
           <View style={styles.versionRow}>
             <View style={styles.appNameRow}>
-              <Text style={styles.appName}>Noor</Text>
-              <Text style={styles.appNameAr}> — نور</Text>
+              <Text style={styles.appName}>Anssam</Text>
+              <Text style={styles.appNameAr}> — أنسام</Text>
             </View>
             <Text style={styles.version}>{t.appVersion}</Text>
           </View>

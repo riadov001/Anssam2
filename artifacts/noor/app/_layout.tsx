@@ -9,13 +9,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppProvider } from "@/contexts/AppContext";
-import { CustomSplash } from "./splash";
+import { CustomSplash } from "@/components/CustomSplash";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -49,7 +50,7 @@ export default function RootLayout() {
     Inter_700Bold,
   });
 
-  const [splashDone, setSplashDone] = useState(false);
+  const [splashDone, setSplashDone] = useState(Platform.OS === "web");
   const nativeHidden = useRef(false);
 
   useEffect(() => {

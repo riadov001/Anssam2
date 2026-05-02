@@ -1,7 +1,7 @@
-# Noor — نور · App Store Metadata
+# Anssam — أنسام · App Store Metadata
 
 ## App Name
-Noor — نور
+Anssam — أنسام
 
 ## Subtitle (30 chars max)
 Prayer Times & Full Quran
@@ -14,14 +14,14 @@ Secondary: Lifestyle
 4+ (No objectionable content)
 
 ## Privacy Policy URL
-https://noorislamicapp.com/privacy
-(Note: required — create a simple privacy page stating no data is collected)
+https://anssamapp.com/privacy
+(Required — create a simple page stating no data is collected)
 
 ## Keywords (100 chars, comma-separated)
 prayer,quran,islam,adhan,qibla,tasbih,duas,hijri,muslim,salah,fajr,isha,dhikr,allah,99 names
 
 ## Description (4000 chars max)
-Noor (نور — "Light") is a premium, privacy-first Islamic companion designed for Muslims worldwide.
+Anssam (أنسام — "Gentle Breezes") is a premium, privacy-first Islamic companion designed for Muslims worldwide.
 
 ✦ PRAYER TIMES
 Accurate salah times calculated locally using the adhan algorithm — no server required. Supports all major calculation methods (MWL, ISNA, Egypt, Makkah, Karachi, Gulf, Kuwait, Qatar, Singapore, France, Turkey) and both Shafi and Hanafi madhabs. A live countdown shows time remaining until the next prayer.
@@ -57,16 +57,16 @@ Luxury dark emerald and gold theme designed for daily spiritual use.
 "And He is with you wherever you are." — Quran 57:4
 
 ## What's New (Version 1.0.0)
-Initial release of Noor — نور.
+Initial release of Anssam — أنسام.
 
 ## Support URL
-https://noorislamicapp.com/support
+https://anssamapp.com/support
 
 ## Marketing URL
-https://noorislamicapp.com
+https://anssamapp.com
 
 ## Copyright
-© 2026 Noor Islamic App. All rights reserved.
+© 2026 Anssam Islamic App — Straight Path Intelligence. All rights reserved.
 
 ## Review Notes for Apple
 - This app uses device location (when in use only) exclusively to calculate prayer times locally. No location data is transmitted to any server.
@@ -74,3 +74,4 @@ https://noorislamicapp.com
 - The app contains no user accounts, no in-app purchases, no advertising, and no analytics.
 - All Islamic content is educational and religious in nature, appropriate for all ages.
 - The app has been tested on iPhone 14 Pro (iOS 17) and iPhone SE 3rd gen (iOS 16).
+- Made by Straight Path Intelligence.

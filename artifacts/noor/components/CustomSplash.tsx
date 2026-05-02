@@ -31,19 +31,19 @@ export function CustomSplash({ onFinish }: SplashProps) {
 
   return (
     <Animated.View style={[styles.container, { opacity: screenFade }]}>
-      {/* Noor Logo */}
+      {/* Anssam Logo */}
       <Animated.View
         style={[
-          styles.noorSection,
+          styles.appSection,
           { opacity: logoAnim, transform: [{ scale: logoScale }] },
         ]}
       >
-        <View style={styles.noorIconWrap}>
-          <Image source={require("../assets/images/icon.png")} style={styles.noorIcon} />
+        <View style={styles.appIconWrap}>
+          <Image source={require("../assets/images/icon.png")} style={styles.appIcon} />
         </View>
-        <Text style={styles.noorName}>Noor</Text>
-        <Text style={styles.noorArabic}>نور</Text>
-        <Text style={styles.noorTagline}>Islamic Companion</Text>
+        <Text style={styles.appName}>Anssam</Text>
+        <Text style={styles.appArabic}>أنسام</Text>
+        <Text style={styles.appTagline}>Islamic Companion</Text>
       </Animated.View>
 
       {/* SPI Attribution */}
@@ -84,12 +84,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     zIndex: 999,
   },
-  noorSection: {
+  appSection: {
     alignItems: "center",
     gap: 10,
     marginBottom: 60,
   },
-  noorIconWrap: {
+  appIconWrap: {
     width: 100,
     height: 100,
     borderRadius: 28,
@@ -101,23 +101,23 @@ const styles = StyleSheet.create({
     elevation: 16,
     marginBottom: 4,
   },
-  noorIcon: {
+  appIcon: {
     width: 100,
     height: 100,
   },
-  noorName: {
+  appName: {
     fontFamily: "Inter_700Bold",
     fontSize: 38,
     color: "#ffffff",
     letterSpacing: 2,
   },
-  noorArabic: {
+  appArabic: {
     fontFamily: "Inter_700Bold",
     fontSize: 28,
     color: "#C9A065",
     marginTop: -6,
   },
-  noorTagline: {
+  appTagline: {
     fontFamily: "Inter_400Regular",
     fontSize: 13,
     color: "#2D8B6F",
