@@ -1,0 +1,3 @@
+- [Apple App Store compliance](apple-appstore-compliance.md) — liste complète des corrections nécessaires pour valider Anssam au premier passage Apple
+- [Video workflow tsconfig](video-tsconfig-dom.md) — le tsconfig de anssam-promo avait lib:["es2022"] sans DOM, causant des erreurs TS sur window/document/HTMLAudioElement
+- [Video workflow port timing](video-workflow-port.md) — restart_workflow timeout ≠ Vite crash; si curl retourne 200, le service tourne vraiment
