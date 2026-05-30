@@ -26,13 +26,25 @@
       "buildNumber": "1",
       "deploymentTarget": "16.0",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Anssam uses your location only to calculate accurate prayer times and Qibla direction. Your location is never stored or shared.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "Anssam uses your location only to calculate accurate prayer times and Qibla direction. Your location is never stored or shared.",
+        "NSLocationWhenInUseUsageDescription": "Anssam utilise votre position uniquement pour calculer les horaires de prières et la direction de la Qibla. Votre position n'est jamais stockée ni partagée.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Anssam utilise votre position uniquement pour calculer les horaires de prières et la direction de la Qibla. Votre position n'est jamais stockée ni partagée.",
+        "NSMotionUsageDescription": "Anssam accède au capteur de cap de votre appareil pour afficher la direction de la Qibla en temps réel. Aucune donnée de mouvement n'est stockée ou partagée.",
+        "NSCameraUsageDescription": "Anssam n'utilise pas la caméra.",
+        "NSPhotoLibraryUsageDescription": "Anssam n'accède pas à votre galerie photo.",
+        "NSPhotoLibraryAddUsageDescription": "Anssam n'enregistre pas de photos dans votre galerie.",
         "ITSAppUsesNonExemptEncryption": false,
         "UIBackgroundModes": [],
         "CFBundleLocalizations": ["en", "ar", "fr", "tr"],
-        "CFBundleDevelopmentRegion": "en",
-        "NSPrivacyTracking": false
+        "CFBundleDevelopmentRegion": "fr",
+        "CFBundleDisplayName": "Anssam",
+        "NSPrivacyTracking": false,
+        "LSApplicationQueriesSchemes": [
+          "comgooglemaps",
+          "googlemaps",
+          "maps",
+          "tel",
+          "mailto"
+        ]
       },
       "privacyManifests": {
         "NSPrivacyAccessedAPITypes": [
@@ -43,6 +55,14 @@
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryFileTimestamp",
             "NSPrivacyAccessedAPITypeReasons": ["C617.1"]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategorySystemBootTime",
+            "NSPrivacyAccessedAPITypeReasons": ["35F9.1"]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryDiskSpace",
+            "NSPrivacyAccessedAPITypeReasons": ["E174.1"]
           }
         ],
         "NSPrivacyCollectedDataTypes": [],
@@ -68,7 +88,9 @@
         "WRITE_CONTACTS",
         "READ_CALENDAR",
         "WRITE_CALENDAR",
-        "CAMERA"
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
       ]
     },
     "web": {
@@ -79,7 +101,7 @@
       [
         "expo-router",
         {
-          "origin": "https://replit.com/"
+          "origin": "https://anssamapp.com"
         }
       ],
       "expo-font",
@@ -87,7 +109,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Anssam uses your location only to calculate accurate prayer times and Qibla direction. Your location is never stored or shared.",
+          "locationWhenInUsePermission": "Anssam utilise votre position uniquement pour calculer les horaires de prières et la direction de la Qibla. Votre position n'est jamais stockée ni partagée.",
           "isIosBackgroundLocationEnabled": false,
           "isAndroidBackgroundLocationEnabled": false
         }
@@ -96,6 +118,11 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "anssam-islamic-app"
+      }
     }
   }
 }

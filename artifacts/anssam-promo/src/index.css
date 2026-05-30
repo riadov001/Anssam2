@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #0D4F3A;
+  --color-secondary: #0A3B2B;
+  --color-accent: #C9A84C;
+  --color-accent-light: #E5CA7D;
+
+  --color-bg-light: #0D4F3A;
+  --color-bg-dark: #05261B;
+  --color-bg-muted: #083D2A;
+
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #E5CA7D;
+  --color-text-muted: #9CA3AF;
+  --color-text-inverse: #05261B;
+
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-arabic: 'Amiri', serif;
+}
+
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-accent: var(--color-accent);
+  --color-bg-light: var(--color-bg-light);
+  --color-bg-dark: var(--color-bg-dark);
+  --color-bg-muted: var(--color-bg-muted);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-inverse: var(--color-text-inverse);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-arabic: var(--font-arabic);
+}
+
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-primary);
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #FFF1C5 0%, #C9A84C 50%, #9A7B2C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

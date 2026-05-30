@@ -6,3 +6,21 @@ id = "W5jOXwlQkZYIo73Sxaeuy"
 uri = "file://artifacts/noor/assets/images/icon.png"
 type = "image"
 title = "generated_image"
+
+[[generated]]
+id = "rIm4pLCnJwWrD7f4_1RS9"
+uri = "file://artifacts/anssam-promo/public/images/geometric-pattern.png"
+type = "image"
+title = "Golden islamic geometric pattern"
+
+[[generated]]
+id = "Lt1A0j189Mad2ZBRg0y5u"
+uri = "file://artifacts/anssam-promo/public/images/crescent-moon.png"
+type = "image"
+title = "Golden crescent moon"
+
+[[generated]]
+id = "zEZBFEdT-WD1VA3ClEfVr"
+uri = "file://artifacts/anssam-promo/public/images/islamic-archway.png"
+type = "image"
+title = "Islamic archway with divine light"
