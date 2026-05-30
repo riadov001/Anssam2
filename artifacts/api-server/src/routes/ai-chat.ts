@@ -6,10 +6,16 @@ import OpenAI from "openai";
 
 const router = Router();
 
-const openai = new OpenAI({
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
-});
+let _openai: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    _openai = new OpenAI({
+      baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+      apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY || "placeholder",
+    });
+  }
+  return _openai;
+}
 
 const SYSTEM_PROMPTS: Record<string, Record<string, string>> = {
   general: {
@@ -84,7 +90,7 @@ router.post("/ai/conversations/:id/messages", async (req, res) => {
     res.setHeader("Connection", "keep-alive");
 
     let fullResponse = "";
-    const stream = await openai.chat.completions.create({
+    const stream = await getOpenAI().chat.completions.create({
       model: "gpt-5.4",
       max_completion_tokens: 1024,
       messages: [
