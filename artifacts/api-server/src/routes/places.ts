@@ -1,29 +1,52 @@
 import { Router } from "express";
 
 const router = Router();
-const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
-async function searchPlaces(lat: number, lng: number, keyword: string, radius = 5000) {
-  const url = new URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json");
-  url.searchParams.set("location", `${lat},${lng}`);
-  url.searchParams.set("radius", String(radius));
-  url.searchParams.set("keyword", keyword);
-  url.searchParams.set("key", GOOGLE_MAPS_API_KEY || "");
+// ─── Overpass API (OpenStreetMap) — free, no key needed ──────────────────────
 
-  const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(`Google Places error: ${res.status}`);
-  return res.json();
+async function searchOverpass(
+  lat: number,
+  lon: number,
+  query: string,
+  radius: number
+): Promise<any[]> {
+  const overpassUrl = "https://overpass-api.de/api/interpreter";
+  const body = `[out:json][timeout:25];(${query}(around:${radius},${lat},${lon}););out body;`;
+
+  const res = await fetch(overpassUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `data=${encodeURIComponent(body)}`,
+    signal: AbortSignal.timeout(28000),
+  });
+
+  if (!res.ok) throw new Error(`Overpass error: ${res.status}`);
+  const data = await res.json();
+  return data.elements || [];
 }
 
-async function getPlaceDetails(placeId: string) {
-  const url = new URL("https://maps.googleapis.com/maps/api/place/details/json");
-  url.searchParams.set("place_id", placeId);
-  url.searchParams.set("fields", "name,formatted_address,formatted_phone_number,opening_hours,rating,user_ratings_total,website,geometry,photos");
-  url.searchParams.set("key", GOOGLE_MAPS_API_KEY || "");
+function osmToPlace(el: any, defaultEmoji?: string) {
+  const tags = el.tags || {};
+  const name = tags.name || tags["name:fr"] || tags["name:ar"] || defaultEmoji || "Lieu";
+  const street = tags["addr:street"] || "";
+  const city = tags["addr:city"] || tags["addr:town"] || "";
+  const housenumber = tags["addr:housenumber"] || "";
+  const address = [housenumber, street, city].filter(Boolean).join(", ") || tags.description || "";
 
-  const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(`Google Places error: ${res.status}`);
-  return res.json();
+  return {
+    id: String(el.id),
+    name,
+    address,
+    rating: null,
+    userRatingsTotal: null,
+    isOpen: null,
+    location: { lat: el.lat || el.center?.lat, lng: el.lon || el.center?.lon },
+    photoUrl: null,
+    phone: tags.phone || tags["contact:phone"] || null,
+    website: tags.website || tags["contact:website"] || null,
+    types: [tags.amenity, tags.shop, tags.cuisine].filter(Boolean),
+    source: "osm",
+  };
 }
 
 // GET /api/places/mosques?lat=&lng=&radius=
@@ -31,30 +54,39 @@ router.get("/places/mosques", async (req, res) => {
   try {
     const { lat, lng, radius } = req.query;
     if (!lat || !lng) return res.status(400).json({ error: "lat and lng required" });
-    const data = await searchPlaces(
-      parseFloat(lat as string),
-      parseFloat(lng as string),
-      "mosquée mosque masjid",
-      radius ? parseInt(radius as string) : 5000
-    );
-    // Extract relevant fields and add photo URLs
-    const places = (data.results || []).map((p: any) => ({
-      id: p.place_id,
-      name: p.name,
-      address: p.vicinity,
-      rating: p.rating,
-      userRatingsTotal: p.user_ratings_total,
-      isOpen: p.opening_hours?.open_now,
-      location: p.geometry?.location,
-      photoUrl: p.photos?.[0]?.photo_reference
-        ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${p.photos[0].photo_reference}&key=${GOOGLE_MAPS_API_KEY}`
-        : null,
-      types: p.types,
-    }));
-    res.json({ places });
+
+    const r = radius ? parseInt(radius as string) : 5000;
+    const latF = parseFloat(lat as string);
+    const lngF = parseFloat(lng as string);
+
+    const query = `
+      node["amenity"="place_of_worship"]["religion"="muslim"];
+      way["amenity"="place_of_worship"]["religion"="muslim"];
+      relation["amenity"="place_of_worship"]["religion"="muslim"]
+    `.trim();
+
+    const elements = await searchOverpass(latF, lngF, query, r);
+
+    const places = elements
+      .map((el: any) => osmToPlace(el, "🕌"))
+      .filter((p: any) => p.name !== "🕌")
+      .sort((a: any, b: any) => {
+        const distA = Math.hypot(
+          (a.location?.lat || latF) - latF,
+          (a.location?.lng || lngF) - lngF
+        );
+        const distB = Math.hypot(
+          (b.location?.lat || latF) - latF,
+          (b.location?.lng || lngF) - lngF
+        );
+        return distA - distB;
+      })
+      .slice(0, 30);
+
+    res.json({ places, source: "openstreetmap" });
   } catch (err) {
     req.log.error(err, "Failed to fetch mosques");
-    res.status(500).json({ error: "Failed to fetch nearby mosques" });
+    res.status(500).json({ error: "Impossible de charger les mosquées. Réessayez." });
   }
 });
 
@@ -63,41 +95,59 @@ router.get("/places/halal", async (req, res) => {
   try {
     const { lat, lng, radius } = req.query;
     if (!lat || !lng) return res.status(400).json({ error: "lat and lng required" });
-    const data = await searchPlaces(
-      parseFloat(lat as string),
-      parseFloat(lng as string),
-      "halal",
-      radius ? parseInt(radius as string) : 3000
-    );
-    const places = (data.results || []).map((p: any) => ({
-      id: p.place_id,
-      name: p.name,
-      address: p.vicinity,
-      rating: p.rating,
-      userRatingsTotal: p.user_ratings_total,
-      isOpen: p.opening_hours?.open_now,
-      location: p.geometry?.location,
-      photoUrl: p.photos?.[0]?.photo_reference
-        ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${p.photos[0].photo_reference}&key=${GOOGLE_MAPS_API_KEY}`
-        : null,
-      types: p.types,
-    }));
-    res.json({ places });
+
+    const r = radius ? parseInt(radius as string) : 3000;
+    const latF = parseFloat(lat as string);
+    const lngF = parseFloat(lng as string);
+
+    // Multiple OSM halal queries
+    const query = `
+      node["shop"="halal"];
+      node["diet:halal"="yes"];
+      node["diet:halal"="only"];
+      node["cuisine"~"halal",i];
+      node["shop"="butcher"]["halal"="yes"];
+      node["shop"="supermarket"]["halal"="yes"];
+      way["shop"="halal"];
+      way["diet:halal"="yes"];
+      way["diet:halal"="only"]
+    `.trim();
+
+    const elements = await searchOverpass(latF, lngF, query, r);
+
+    // Deduplicate by id
+    const seen = new Set<string>();
+    const places = elements
+      .map((el: any) => osmToPlace(el, "🥩"))
+      .filter((p: any) => {
+        if (p.name === "🥩") return false;
+        if (seen.has(p.id)) return false;
+        seen.add(p.id);
+        return true;
+      })
+      .sort((a: any, b: any) => {
+        const distA = Math.hypot(
+          (a.location?.lat || latF) - latF,
+          (a.location?.lng || lngF) - lngF
+        );
+        const distB = Math.hypot(
+          (b.location?.lat || latF) - latF,
+          (b.location?.lng || lngF) - lngF
+        );
+        return distA - distB;
+      })
+      .slice(0, 40);
+
+    res.json({ places, source: "openstreetmap" });
   } catch (err) {
     req.log.error(err, "Failed to fetch halal places");
-    res.status(500).json({ error: "Failed to fetch nearby halal places" });
+    res.status(500).json({ error: "Impossible de charger les commerces halal. Réessayez." });
   }
 });
 
-// GET /api/places/:placeId
-router.get("/places/details/:placeId", async (req, res) => {
-  try {
-    const data = await getPlaceDetails(req.params.placeId);
-    res.json({ place: data.result });
-  } catch (err) {
-    req.log.error(err, "Failed to fetch place details");
-    res.status(500).json({ error: "Failed to fetch place details" });
-  }
+// GET /api/places/details/:placeId — kept for backward compat
+router.get("/places/details/:placeId", async (_req, res) => {
+  res.json({ place: null });
 });
 
 export default router;

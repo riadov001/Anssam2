@@ -116,6 +116,7 @@ export default function MoreScreen() {
     { icon: "location", label: "Mosquées", route: "/mosques", color: colors.primary, desc: "À proximité", emoji: "🕌" },
     { icon: "restaurant", label: "Halal", route: "/halal", color: colors.gold, desc: "Commerces certifiés", emoji: "🥩" },
     { icon: "hand-left", label: t.duas as string, route: "/dhikr-page", color: "#7C5CBF", desc: "Douâs & Dhikr", emoji: "🤲" },
+    { icon: "fitness", label: "Mon Parcours", route: "/spiritual", color: "#E91E8C", desc: "Score & Coaching", emoji: "💫" },
     { icon: "settings", label: t.settings as string, route: "/settings", color: colors.mutedForeground, desc: "Langue & Calcul", emoji: "⚙️" },
   ];
 

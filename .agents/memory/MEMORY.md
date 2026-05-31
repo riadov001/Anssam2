@@ -1,3 +1,5 @@
 - [Apple App Store compliance](apple-appstore-compliance.md) — liste complète des corrections nécessaires pour valider Anssam au premier passage Apple
 - [Video workflow tsconfig](video-tsconfig-dom.md) — le tsconfig de anssam-promo avait lib:["es2022"] sans DOM, causant des erreurs TS sur window/document/HTMLAudioElement
 - [Video workflow port timing](video-workflow-port.md) — restart_workflow timeout ≠ Vite crash; si curl retourne 200, le service tourne vraiment
+- [Places API — Overpass preferred](places-overpass.md) — Google Places remplacé par OpenStreetMap Overpass API (gratuit, sans clé); halal/mosque screens utilisent PrayerTimesContext pour le GPS partagé
+- [Spiritual assistant architecture](spiritual-context.md) — SpiritualContext (AsyncStorage, score 0-100, streak, coaching) wrappé dans _layout.tsx; écran /spiritual accessible depuis more.tsx grid

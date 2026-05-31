@@ -17,6 +17,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppProvider } from "@/contexts/AppContext";
 import { PrayerTimesProvider } from "@/contexts/PrayerTimesContext";
+import { SpiritualProvider } from "@/contexts/SpiritualContext";
 import { CustomSplash } from "@/components/CustomSplash";
 
 SplashScreen.preventAutoHideAsync();
@@ -59,6 +60,10 @@ function RootLayoutNav() {
         name="halal"
         options={{ title: "Commerces halal", headerBackTitle: "Plus", headerTintColor: "#2D8B6F" }}
       />
+      <Stack.Screen
+        name="spiritual"
+        options={{ headerShown: false }}
+      />
     </Stack>
   );
 }
@@ -90,20 +95,22 @@ export default function RootLayout() {
   return (
     <AppProvider>
       <PrayerTimesProvider>
-        <SafeAreaProvider>
-          <ErrorBoundary>
-            <QueryClientProvider client={queryClient}>
-              <GestureHandlerRootView style={{ flex: 1 }}>
-                <KeyboardProvider>
-                  <RootLayoutNav />
-                  {!splashDone && (
-                    <CustomSplash onFinish={handleSplashFinish} />
-                  )}
-                </KeyboardProvider>
-              </GestureHandlerRootView>
-            </QueryClientProvider>
-          </ErrorBoundary>
-        </SafeAreaProvider>
+        <SpiritualProvider>
+          <SafeAreaProvider>
+            <ErrorBoundary>
+              <QueryClientProvider client={queryClient}>
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                  <KeyboardProvider>
+                    <RootLayoutNav />
+                    {!splashDone && (
+                      <CustomSplash onFinish={handleSplashFinish} />
+                    )}
+                  </KeyboardProvider>
+                </GestureHandlerRootView>
+              </QueryClientProvider>
+            </ErrorBoundary>
+          </SafeAreaProvider>
+        </SpiritualProvider>
       </PrayerTimesProvider>
     </AppProvider>
   );
