@@ -49,28 +49,35 @@ export function CustomSplash({ onFinish }: SplashProps) {
       {/* SPI Attribution */}
       <Animated.View
         style={[
-          styles.spiRow,
+          styles.spiSection,
           {
             opacity: spiAnim,
             transform: [
               {
                 translateY: spiAnim.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [10, 0],
+                  outputRange: [16, 0],
                 }),
               },
             ],
           },
         ]}
       >
-        <Text style={styles.madeBy}>Made by</Text>
-        <View style={styles.spiLogoWrap}>
-          <Image
-            source={require("../assets/images/spi-logo.jpg")}
-            style={styles.spiLogo}
-          />
+        <View style={styles.spiDivider} />
+        <Text style={styles.madeBy}>Conçu par</Text>
+        <View style={styles.spiRow}>
+          <View style={styles.spiLogoWrap}>
+            <Image
+              source={require("../assets/images/spi-logo.jpg")}
+              style={styles.spiLogo}
+              resizeMode="cover"
+            />
+          </View>
+          <View style={styles.spiTextCol}>
+            <Text style={styles.spiName}>Straight Path</Text>
+            <Text style={styles.spiNameAccent}>Intelligence</Text>
+          </View>
         </View>
-        <Text style={styles.spiName}>Straight Path Intelligence</Text>
       </Animated.View>
     </Animated.View>
   );
@@ -125,35 +132,62 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     marginTop: 2,
   },
-  spiRow: {
+  spiSection: {
     position: "absolute",
-    bottom: 52,
-    flexDirection: "row",
+    bottom: 48,
     alignItems: "center",
-    gap: 7,
+    gap: 10,
+  },
+  spiDivider: {
+    width: 40,
+    height: 1,
+    backgroundColor: "rgba(255,255,255,0.12)",
+    marginBottom: 2,
   },
   madeBy: {
     fontFamily: "Inter_400Regular",
     fontSize: 11,
-    color: "rgba(255,255,255,0.35)",
-    letterSpacing: 0.5,
+    color: "rgba(255,255,255,0.45)",
+    letterSpacing: 1.5,
+    textTransform: "uppercase",
+  },
+  spiRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
   spiLogoWrap: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    width: 36,
+    height: 36,
+    borderRadius: 10,
     overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.15)",
+    borderWidth: 1.5,
+    borderColor: "rgba(201,168,76,0.4)",
+    shadowColor: "#C9A84C",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 6,
   },
   spiLogo: {
-    width: 22,
-    height: 22,
+    width: 36,
+    height: 36,
+  },
+  spiTextCol: {
+    gap: 0,
   },
   spiName: {
-    fontFamily: "Inter_500Medium",
-    fontSize: 11,
-    color: "rgba(255,255,255,0.55)",
-    letterSpacing: 0.3,
+    fontFamily: "Inter_700Bold",
+    fontSize: 14,
+    color: "rgba(255,255,255,0.85)",
+    letterSpacing: 0.4,
+    lineHeight: 18,
+  },
+  spiNameAccent: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 14,
+    color: "#2D8B6F",
+    letterSpacing: 0.4,
+    lineHeight: 18,
   },
 });
