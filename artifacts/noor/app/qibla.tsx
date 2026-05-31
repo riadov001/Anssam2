@@ -25,7 +25,7 @@ export default function QiblaScreen() {
   const router = useRouter();
   const { language } = useApp();
   const t = useTranslations(language);
-  const { qiblaDirection, loading, city, latitude, longitude } = usePrayerTimes();
+  const { qiblaDirection, loading, city, latitude, longitude, permissionDenied, refreshLocation } = usePrayerTimes();
   const isWeb = Platform.OS === "web";
   const topPad = isWeb ? 67 : insets.top;
 
@@ -46,23 +46,23 @@ export default function QiblaScreen() {
     Animated.timing(fadeAnim, { toValue: 1, duration: 700, useNativeDriver: true }).start();
   }, [pulseAnim, fadeAnim]);
 
-  // Device compass (native only)
+  // Device compass (native only) — permission already granted by PrayerTimesContext
   useEffect(() => {
-    if (Platform.OS === "web") return;
+    if (Platform.OS === "web" || permissionDenied) return;
     let sub: any = null;
     (async () => {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const Location = require("expo-location");
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") return;
         sub = await Location.watchHeadingAsync((heading: any) => {
-          setDeviceHeading(heading.magHeading || 0);
+          const h = heading.trueHeading > 0 ? heading.trueHeading : heading.magHeading;
+          setDeviceHeading(h || 0);
           setHasCompass(true);
         });
       } catch {}
     })();
     return () => { if (sub) sub.remove(); };
-  }, []);
+  }, [permissionDenied]);
 
   // Animate needle
   useEffect(() => {
@@ -97,10 +97,27 @@ export default function QiblaScreen() {
       </View>
 
       <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
+
+        {/* Permission denied banner */}
+        {permissionDenied && (
+          <View style={styles.permissionCard}>
+            <Ionicons name="location-off-outline" size={20} color={colors.gold} />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.permissionTitle}>Localisation désactivée</Text>
+              <Text style={styles.permissionSub}>
+                La direction est calculée depuis Makkah par défaut.
+              </Text>
+            </View>
+            <TouchableOpacity style={styles.permissionBtn} onPress={refreshLocation}>
+              <Text style={styles.permissionBtnText}>Activer</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* City info */}
         <View style={styles.cityRow}>
-          <Ionicons name="location" size={16} color={colors.primary} />
-          <Text style={styles.cityText}>{city}</Text>
+          <Ionicons name="location" size={16} color={permissionDenied ? colors.mutedForeground : colors.primary} />
+          <Text style={[styles.cityText, permissionDenied && { opacity: 0.5 }]}>{city}</Text>
         </View>
 
         {/* Compass */}
@@ -290,6 +307,39 @@ function makeStyles(colors: any, topPad: number) {
     coordsText: {
       fontFamily: "Inter_400Regular", fontSize: 10,
       color: colors.mutedForeground, textAlign: "center", opacity: 0.6,
+    },
+    permissionCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      backgroundColor: colors.gold + "15",
+      borderRadius: 16,
+      padding: 14,
+      borderWidth: 1,
+      borderColor: colors.gold + "35",
+      width: "100%",
+    },
+    permissionTitle: {
+      fontFamily: "Inter_600SemiBold",
+      fontSize: 13,
+      color: colors.foreground,
+    },
+    permissionSub: {
+      fontFamily: "Inter_400Regular",
+      fontSize: 11,
+      color: colors.mutedForeground,
+      marginTop: 2,
+    },
+    permissionBtn: {
+      backgroundColor: colors.primary,
+      borderRadius: 10,
+      paddingHorizontal: 12,
+      paddingVertical: 7,
+    },
+    permissionBtnText: {
+      fontFamily: "Inter_600SemiBold",
+      fontSize: 12,
+      color: colors.primaryForeground,
     },
   });
 }

@@ -49,7 +49,7 @@ export default function PrayerScreen() {
   const insets = useSafeAreaInsets();
   const { language } = useApp();
   const t = useTranslations(language);
-  const { times, nextPrayer, loading, error, city, qiblaDirection, calculate } =
+  const { times, nextPrayer, loading, error, city, qiblaDirection, permissionDenied, refreshLocation } =
     usePrayerTimes();
   const [countdown, setCountdown] = useState("--:--:--");
   const [now, setNow] = useState(new Date());
@@ -126,9 +126,9 @@ export default function PrayerScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    if (calculate) calculate();
-    setTimeout(() => setRefreshing(false), 1200);
-  }, [calculate]);
+    refreshLocation();
+    setTimeout(() => setRefreshing(false), 1400);
+  }, [refreshLocation]);
 
   const hijri = toHijri(now);
   const hijriMonth = t.hijriMonths[hijri.month - 1] || "";
@@ -186,13 +186,25 @@ export default function PrayerScreen() {
                 <Text style={styles.loadingText}>{t.loadingPrayers}</Text>
               </View>
             </View>
+          ) : permissionDenied ? (
+            <View style={styles.loadingContainer}>
+              <View style={styles.errorCard}>
+                <Ionicons name="location-off-outline" size={36} color={colors.gold} />
+                <Text style={styles.loadingText}>
+                  Accès à la localisation refusé.{"\n"}Activez-la dans Réglages pour obtenir les horaires précis.
+                </Text>
+                <TouchableOpacity style={styles.retryBtn} onPress={onRefresh}>
+                  <Text style={styles.retryText}>Réessayer</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           ) : error ? (
             <View style={styles.loadingContainer}>
               <View style={styles.errorCard}>
                 <Ionicons name="wifi-outline" size={36} color={colors.gold} />
                 <Text style={styles.loadingText}>{error}</Text>
                 <TouchableOpacity style={styles.retryBtn} onPress={onRefresh}>
-                  <Text style={styles.retryText}>Retry</Text>
+                  <Text style={styles.retryText}>Réessayer</Text>
                 </TouchableOpacity>
               </View>
             </View>

@@ -16,6 +16,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppProvider } from "@/contexts/AppContext";
+import { PrayerTimesProvider } from "@/contexts/PrayerTimesContext";
 import { CustomSplash } from "@/components/CustomSplash";
 
 SplashScreen.preventAutoHideAsync();
@@ -88,20 +89,22 @@ export default function RootLayout() {
 
   return (
     <AppProvider>
-      <SafeAreaProvider>
-        <ErrorBoundary>
-          <QueryClientProvider client={queryClient}>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <KeyboardProvider>
-                <RootLayoutNav />
-                {!splashDone && (
-                  <CustomSplash onFinish={handleSplashFinish} />
-                )}
-              </KeyboardProvider>
-            </GestureHandlerRootView>
-          </QueryClientProvider>
-        </ErrorBoundary>
-      </SafeAreaProvider>
+      <PrayerTimesProvider>
+        <SafeAreaProvider>
+          <ErrorBoundary>
+            <QueryClientProvider client={queryClient}>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <KeyboardProvider>
+                  <RootLayoutNav />
+                  {!splashDone && (
+                    <CustomSplash onFinish={handleSplashFinish} />
+                  )}
+                </KeyboardProvider>
+              </GestureHandlerRootView>
+            </QueryClientProvider>
+          </ErrorBoundary>
+        </SafeAreaProvider>
+      </PrayerTimesProvider>
     </AppProvider>
   );
 }
