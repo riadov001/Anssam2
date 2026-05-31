@@ -1,9 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import {
-  Animated,
   Image,
   Platform,
   ScrollView,
@@ -12,6 +11,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Reanimated, {
+  FadeInDown,
+  FadeInUp,
+  ZoomIn,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AppHeader } from "@/components/AppHeader";
@@ -44,6 +51,46 @@ interface FeatureCard {
   emoji?: string;
 }
 
+function AnimatedFeatureCard({
+  feature,
+  index,
+  onPress,
+  styles,
+}: {
+  feature: FeatureCard;
+  index: number;
+  onPress: (route: string) => void;
+  styles: ReturnType<typeof makeStyles>;
+}) {
+  const scale = useSharedValue(1);
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <Reanimated.View
+      entering={FadeInUp.delay(100 + index * 65).duration(400).springify().damping(14)}
+      style={[styles.featureCardWrapper, animStyle]}
+    >
+      <TouchableOpacity
+        style={styles.featureCard}
+        onPress={() => onPress(feature.route)}
+        activeOpacity={1}
+        onPressIn={() => { scale.value = withSpring(0.94, { damping: 12, stiffness: 300 }); }}
+        onPressOut={() => { scale.value = withSpring(1, { damping: 12, stiffness: 200 }); }}
+      >
+        <LinearGradient
+          colors={[feature.color + "18", feature.color + "06"]}
+          style={StyleSheet.absoluteFill}
+        />
+        <Text style={styles.featureEmoji}>{feature.emoji}</Text>
+        <Text style={styles.featureLabel}>{feature.label}</Text>
+        <Text style={[styles.featureDesc, { color: feature.color + "BB" }]}>{feature.desc}</Text>
+      </TouchableOpacity>
+    </Reanimated.View>
+  );
+}
+
 export default function MoreScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
@@ -55,15 +102,6 @@ export default function MoreScreen() {
   const bottomPad = isWeb ? 34 : insets.bottom;
 
   const [now] = useState(new Date());
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(20)).current;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
-      Animated.timing(slideAnim, { toValue: 0, duration: 500, useNativeDriver: true }),
-    ]).start();
-  }, [fadeAnim, slideAnim]);
 
   const hijri = toHijri(now);
   const hijriMonth = t.hijriMonths[hijri.month - 1] || "";
@@ -91,7 +129,7 @@ export default function MoreScreen() {
       >
 
       {/* Hijri Calendar Hero */}
-      <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
+      <Reanimated.View entering={FadeInDown.duration(600).springify().damping(16)}>
         <View style={styles.hijriCard}>
           <LinearGradient
             colors={[colors.primary, "#1A5C3A", "#0D3021"]}
@@ -119,7 +157,12 @@ export default function MoreScreen() {
             <Text style={styles.hijriLabel}>{t.hijriCalendar}</Text>
           </View>
           <View style={styles.hijriDateRow}>
-            <Text style={styles.hijriDay}>{hijri.day}</Text>
+            <Reanimated.Text
+              entering={ZoomIn.delay(200).duration(500).springify()}
+              style={styles.hijriDay}
+            >
+              {hijri.day}
+            </Reanimated.Text>
             <View style={styles.hijriMonthCol}>
               <Text style={styles.hijriMonthAr}>{hijriMonthAr}</Text>
               <Text style={styles.hijriMonth}>{hijriMonth}</Text>
@@ -136,30 +179,23 @@ export default function MoreScreen() {
             </Text>
           </View>
         </View>
-      </Animated.View>
+      </Reanimated.View>
 
       {/* Feature Grid — 2 columns */}
-      <Animated.View style={[styles.grid, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
-        {features.map((feature) => (
-          <TouchableOpacity
+      <View style={styles.grid}>
+        {features.map((feature, index) => (
+          <AnimatedFeatureCard
             key={feature.route}
-            style={styles.featureCard}
-            onPress={() => router.push(feature.route as any)}
-            activeOpacity={0.75}
-          >
-            <LinearGradient
-              colors={[feature.color + "18", feature.color + "06"]}
-              style={StyleSheet.absoluteFill}
-            />
-            <Text style={styles.featureEmoji}>{feature.emoji}</Text>
-            <Text style={styles.featureLabel}>{feature.label}</Text>
-            <Text style={[styles.featureDesc, { color: feature.color + "BB" }]}>{feature.desc}</Text>
-          </TouchableOpacity>
+            feature={feature}
+            index={index}
+            onPress={(route) => router.push(route as any)}
+            styles={styles}
+          />
         ))}
-      </Animated.View>
+      </View>
 
       {/* About Card */}
-      <Animated.View style={{ opacity: fadeAnim }}>
+      <Reanimated.View entering={FadeInUp.delay(600).duration(400).springify()}>
         <View style={styles.aboutCard}>
           <View style={styles.aboutRow}>
             <View style={[styles.aboutIcon, { backgroundColor: colors.primary + "20" }]}>
@@ -190,32 +226,34 @@ export default function MoreScreen() {
             <Text style={styles.version}>{t.appVersion}</Text>
           </View>
         </View>
-      </Animated.View>
+      </Reanimated.View>
 
-      {/* SPI Attribution — Premium signature */}
-      <Animated.View style={[styles.spiCard, { opacity: fadeAnim }]}>
-        <LinearGradient
-          colors={[colors.primary + "10", colors.gold + "08", "transparent"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={StyleSheet.absoluteFill}
-        />
-        <Text style={styles.madeByText}>Conçu et développé par</Text>
-        <View style={styles.spiBrandRow}>
-          <View style={styles.spiLogoWrap}>
-            <Image
-              source={require("../../assets/images/spi-logo.jpg")}
-              style={styles.spiLogoImg}
-              resizeMode="cover"
-            />
+      {/* SPI Attribution */}
+      <Reanimated.View entering={FadeInUp.delay(700).duration(400).springify()}>
+        <View style={styles.spiCard}>
+          <LinearGradient
+            colors={[colors.primary + "10", colors.gold + "08", "transparent"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+          <Text style={styles.madeByText}>Conçu et développé par</Text>
+          <View style={styles.spiBrandRow}>
+            <View style={styles.spiLogoWrap}>
+              <Image
+                source={require("../../assets/images/spi-logo.jpg")}
+                style={styles.spiLogoImg}
+                resizeMode="cover"
+              />
+            </View>
+            <View style={styles.spiTextCol}>
+              <Text style={styles.spiName}>Straight Path</Text>
+              <Text style={styles.spiNameAccent}>Intelligence</Text>
+            </View>
           </View>
-          <View style={styles.spiTextCol}>
-            <Text style={styles.spiName}>Straight Path</Text>
-            <Text style={styles.spiNameAccent}>Intelligence</Text>
-          </View>
+          <Text style={styles.spiTagline}>L'intelligence au service de la spiritualité</Text>
         </View>
-        <Text style={styles.spiTagline}>L'intelligence au service de la spiritualité</Text>
-      </Animated.View>
+      </Reanimated.View>
       </ScrollView>
     </View>
   );
@@ -249,8 +287,8 @@ function makeStyles(colors: any, topPad: number, bottomPad: number) {
     gregorianRow: { flexDirection: "row", alignItems: "center", gap: 7 },
     gregorianDate: { fontFamily: "Inter_400Regular", fontSize: 13, color: colors.primaryForeground, opacity: 0.7 },
     grid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
+    featureCardWrapper: { width: "48%" },
     featureCard: {
-      width: "48%",
       backgroundColor: colors.card,
       borderRadius: 18,
       padding: 16,

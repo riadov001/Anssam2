@@ -4,6 +4,13 @@
     "appVersionSource": "local"
   },
   "build": {
+    "apk-dev": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleDebug"
+      }
+    },
     "development": {
       "developmentClient": true,
       "distribution": "internal",
@@ -33,13 +40,6 @@
       },
       "android": {
         "buildType": "app-bundle",
-        "distribution": "store"
-      }
-    },
-    "android-apk": {
-      "channel": "production",
-      "android": {
-        "buildType": "apk",
         "distribution": "store"
       }
     }

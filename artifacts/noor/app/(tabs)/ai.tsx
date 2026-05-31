@@ -12,6 +12,18 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Reanimated, {
+  FadeInDown,
+  FadeInLeft,
+  FadeInRight,
+  FadeInUp,
+  ZoomIn,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AppHeader } from "@/components/AppHeader";
@@ -41,6 +53,85 @@ const WELCOME_MESSAGES: Record<string, string> = {
   children: "Salam ! Moi c'est Anssam, ton ami musulman ! 🌟 Tu veux qu'on apprenne ensemble ? On peut parler des prophètes, des 5 piliers, ou des bonnes valeurs ! 😊🕌",
 };
 
+function AnimatedModeCard({
+  m,
+  index,
+  onPress,
+  styles,
+  colors,
+}: {
+  m: (typeof MODES)[0];
+  index: number;
+  onPress: (key: string) => void;
+  styles: ReturnType<typeof makeStyles>;
+  colors: any;
+}) {
+  const scale = useSharedValue(1);
+  const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
+  return (
+    <Reanimated.View
+      entering={FadeInUp.delay(200 + index * 80).duration(400).springify().damping(14)}
+      style={[styles.modeCardWrapper, animStyle]}
+    >
+      <TouchableOpacity
+        style={styles.modeCard}
+        onPress={() => onPress(m.key)}
+        activeOpacity={1}
+        onPressIn={() => { scale.value = withSpring(0.93, { damping: 12, stiffness: 350 }); }}
+        onPressOut={() => { scale.value = withSpring(1, { damping: 12, stiffness: 200 }); }}
+      >
+        <LinearGradient colors={[colors.primary + "25", colors.primary + "08"]} style={StyleSheet.absoluteFill} />
+        <Text style={styles.modeEmoji}>{m.emoji}</Text>
+        <Text style={styles.modeLabel}>{m.label}</Text>
+        <Text style={styles.modeDesc}>{m.desc}</Text>
+      </TouchableOpacity>
+    </Reanimated.View>
+  );
+}
+
+function ChatBubble({
+  msg,
+  index,
+  isLast,
+  sending,
+  styles,
+  colors,
+}: {
+  msg: Message;
+  index: number;
+  isLast: boolean;
+  sending: boolean;
+  styles: ReturnType<typeof makeStyles>;
+  colors: any;
+}) {
+  const isUser = msg.role === "user";
+  const EnteringAnim = isUser
+    ? FadeInRight.duration(280).springify().damping(16)
+    : FadeInLeft.duration(280).springify().damping(16);
+
+  return (
+    <Reanimated.View
+      entering={EnteringAnim}
+      style={[styles.bubble, isUser ? styles.userBubble : styles.aiBubble]}
+    >
+      {!isUser && (
+        <Reanimated.View
+          entering={ZoomIn.delay(60).duration(250)}
+          style={styles.aiAvatar}
+        >
+          <Text style={{ fontSize: 14 }}>✨</Text>
+        </Reanimated.View>
+      )}
+      <View style={[styles.bubbleContent, isUser ? styles.userBubbleContent : styles.aiBubbleContent]}>
+        <Text style={[styles.bubbleText, isUser ? styles.userBubbleText : styles.aiBubbleText]}>
+          {msg.content || (sending && isLast ? "…" : "")}
+        </Text>
+      </View>
+    </Reanimated.View>
+  );
+}
+
 export default function AiScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
@@ -57,6 +148,10 @@ export default function AiScreen() {
   const [sending, setSending] = useState(false);
   const [showModes, setShowModes] = useState(true);
   const scrollRef = useRef<ScrollView>(null);
+
+  // Send button pulse
+  const sendScale = useSharedValue(1);
+  const sendStyle = useAnimatedStyle(() => ({ transform: [{ scale: sendScale.value }] }));
 
   const startConversation = async (selectedMode: string) => {
     setMode(selectedMode);
@@ -82,6 +177,12 @@ export default function AiScreen() {
 
   const sendMessage = async () => {
     if (!input.trim() || sending || !conversationId) return;
+    // Animate send button
+    sendScale.value = withSequence(
+      withSpring(0.85, { damping: 10, stiffness: 400 }),
+      withSpring(1, { damping: 10, stiffness: 300 }),
+    );
+
     const userMsg: Message = { role: "user", content: input.trim() };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
@@ -145,24 +246,42 @@ export default function AiScreen() {
       <View style={styles.container}>
         <AppHeader subtitle="Anssam · Assistant IA islamique" />
         <LinearGradient colors={[colors.primary + "30", "transparent"]} style={styles.modeBg} />
-        <Text style={styles.modeTitle}>Anssam — IA Islamique</Text>
-        <Text style={styles.modeSubtitle}>
+        <Reanimated.Text
+          entering={FadeInDown.duration(500).springify()}
+          style={styles.modeTitle}
+        >
+          Anssam — IA Islamique
+        </Reanimated.Text>
+        <Reanimated.Text
+          entering={FadeInDown.delay(80).duration(500).springify()}
+          style={styles.modeSubtitle}
+        >
           Votre assistant intelligent pour apprendre et pratiquer l'islam
-        </Text>
-        <Text style={styles.nourAr}>أنسام</Text>
+        </Reanimated.Text>
+        <Reanimated.Text
+          entering={ZoomIn.delay(150).duration(600).springify().damping(12)}
+          style={styles.nourAr}
+        >
+          أنسام
+        </Reanimated.Text>
         <View style={styles.modeGrid}>
-          {MODES.map((m) => (
-            <TouchableOpacity key={m.key} style={styles.modeCard} onPress={() => startConversation(m.key)} activeOpacity={0.8}>
-              <LinearGradient colors={[colors.primary + "25", colors.primary + "08"]} style={StyleSheet.absoluteFill} />
-              <Text style={styles.modeEmoji}>{m.emoji}</Text>
-              <Text style={styles.modeLabel}>{m.label}</Text>
-              <Text style={styles.modeDesc}>{m.desc}</Text>
-            </TouchableOpacity>
+          {MODES.map((m, index) => (
+            <AnimatedModeCard
+              key={m.key}
+              m={m}
+              index={index}
+              onPress={startConversation}
+              styles={styles}
+              colors={colors}
+            />
           ))}
         </View>
-        <Text style={styles.disclaimer}>
+        <Reanimated.Text
+          entering={FadeInUp.delay(500).duration(400)}
+          style={styles.disclaimer}
+        >
           Propulsé par IA · Les réponses sont basées sur le Coran et la Sunna
-        </Text>
+        </Reanimated.Text>
       </View>
     );
   }
@@ -170,7 +289,10 @@ export default function AiScreen() {
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       {/* Header */}
-      <View style={styles.chatHeader}>
+      <Reanimated.View
+        entering={FadeInDown.duration(350).springify()}
+        style={styles.chatHeader}
+      >
         <TouchableOpacity onPress={() => { setShowModes(true); setMessages([]); setConversationId(null); }} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={20} color={colors.foreground} />
         </TouchableOpacity>
@@ -179,34 +301,37 @@ export default function AiScreen() {
           <Text style={styles.chatHeaderSub}>{MODES.find((m) => m.key === mode)?.label} · IA Islamique</Text>
         </View>
         <View style={styles.nourDot} />
-      </View>
+      </Reanimated.View>
 
       {/* Messages */}
       <ScrollView ref={scrollRef} style={styles.messages} contentContainerStyle={styles.messagesContent} showsVerticalScrollIndicator={false}>
         {messages.map((msg, i) => (
-          <View key={i} style={[styles.bubble, msg.role === "user" ? styles.userBubble : styles.aiBubble]}>
-            {msg.role === "assistant" && (
-              <View style={styles.aiAvatar}>
-                <Text style={{ fontSize: 14 }}>✨</Text>
-              </View>
-            )}
-            <View style={[styles.bubbleContent, msg.role === "user" ? styles.userBubbleContent : styles.aiBubbleContent]}>
-              <Text style={[styles.bubbleText, msg.role === "user" ? styles.userBubbleText : styles.aiBubbleText]}>
-                {msg.content || (sending && i === messages.length - 1 ? "…" : "")}
-              </Text>
-            </View>
-          </View>
+          <ChatBubble
+            key={i}
+            msg={msg}
+            index={i}
+            isLast={i === messages.length - 1}
+            sending={sending}
+            styles={styles}
+            colors={colors}
+          />
         ))}
         {sending && messages[messages.length - 1]?.content === "" && (
-          <View style={styles.typingIndicator}>
+          <Reanimated.View
+            entering={FadeInLeft.duration(300).springify()}
+            style={styles.typingIndicator}
+          >
             <ActivityIndicator size="small" color={colors.primary} />
             <Text style={styles.typingText}>Anssam réfléchit…</Text>
-          </View>
+          </Reanimated.View>
         )}
       </ScrollView>
 
       {/* Input */}
-      <View style={[styles.inputRow, { paddingBottom: bottomPad + 8 }]}>
+      <Reanimated.View
+        entering={FadeInUp.duration(350).springify()}
+        style={[styles.inputRow, { paddingBottom: bottomPad + 8 }]}
+      >
         <TextInput
           style={styles.input}
           value={input}
@@ -217,14 +342,16 @@ export default function AiScreen() {
           maxLength={500}
           onSubmitEditing={sendMessage}
         />
-        <TouchableOpacity
-          style={[styles.sendBtn, (!input.trim() || sending) && { opacity: 0.4 }]}
-          onPress={sendMessage}
-          disabled={!input.trim() || sending}
-        >
-          <Ionicons name="send" size={18} color="#fff" />
-        </TouchableOpacity>
-      </View>
+        <Reanimated.View style={sendStyle}>
+          <TouchableOpacity
+            style={[styles.sendBtn, (!input.trim() || sending) && { opacity: 0.4 }]}
+            onPress={sendMessage}
+            disabled={!input.trim() || sending}
+          >
+            <Ionicons name="send" size={18} color="#fff" />
+          </TouchableOpacity>
+        </Reanimated.View>
+      </Reanimated.View>
     </KeyboardAvoidingView>
   );
 }
@@ -237,8 +364,9 @@ function makeStyles(colors: any, topPad: number, bottomPad: number) {
     modeSubtitle: { fontFamily: "Inter_400Regular", fontSize: 13, color: colors.mutedForeground, textAlign: "center", paddingHorizontal: 30, marginTop: 6 },
     nourAr: { fontFamily: "Inter_700Bold", fontSize: 48, color: colors.gold, textAlign: "center", marginTop: 8 },
     modeGrid: { flexDirection: "row", flexWrap: "wrap", gap: 12, padding: 20, justifyContent: "center", marginTop: 8 },
+    modeCardWrapper: { width: "45%" },
     modeCard: {
-      width: "45%", borderRadius: 20, padding: 20, gap: 8,
+      borderRadius: 20, padding: 20, gap: 8,
       backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border,
       alignItems: "center", overflow: "hidden",
     },

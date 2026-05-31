@@ -11,6 +11,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Reanimated, {
+  FadeInDown,
+  FadeInUp,
+  ZoomIn,
+  useSharedValue,
+  useAnimatedStyle,
+  withSequence,
+  withTiming,
+  withSpring,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AppHeader } from "@/components/AppHeader";
@@ -48,6 +58,20 @@ export default function PrayerScreen() {
   const dotAnim = useRef(new Animated.Value(1)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
+  // Reanimated shared values for countdown pulse
+  const countdownScale = useSharedValue(1);
+  const countdownOpacity = useSharedValue(1);
+  const cardGlow = useSharedValue(0.35);
+
+  const countdownStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: countdownScale.value }],
+    opacity: countdownOpacity.value,
+  }));
+
+  const cardGlowStyle = useAnimatedStyle(() => ({
+    borderColor: `rgba(201,168,76,${cardGlow.value})`,
+  }));
+
   const isWeb = Platform.OS === "web";
   const topPad = isWeb ? 67 : insets.top;
   const bottomPad = isWeb ? 34 : insets.bottom;
@@ -58,7 +82,20 @@ export default function PrayerScreen() {
       duration: 600,
       useNativeDriver: true,
     }).start();
-  }, [fadeAnim]);
+
+    // Glow pulse on next prayer card
+    cardGlow.value = withSequence(
+      withTiming(0.6, { duration: 1800 }),
+      withTiming(0.25, { duration: 1800 }),
+    );
+    const glowInterval = setInterval(() => {
+      cardGlow.value = withSequence(
+        withTiming(0.6, { duration: 1800 }),
+        withTiming(0.25, { duration: 1800 }),
+      );
+    }, 3600);
+    return () => clearInterval(glowInterval);
+  }, [fadeAnim, cardGlow]);
 
   useEffect(() => {
     const loop = Animated.loop(
@@ -74,10 +111,18 @@ export default function PrayerScreen() {
   useEffect(() => {
     const interval = setInterval(() => {
       setNow(new Date());
-      if (nextPrayer) setCountdown(getCountdown(nextPrayer.time));
+      if (nextPrayer) {
+        const newCountdown = getCountdown(nextPrayer.time);
+        setCountdown(newCountdown);
+        // Pulse the countdown on every second
+        countdownScale.value = withSequence(
+          withSpring(1.04, { damping: 10, stiffness: 300 }),
+          withSpring(1, { damping: 12, stiffness: 200 }),
+        );
+      }
     }, 1000);
     return () => clearInterval(interval);
-  }, [nextPrayer]);
+  }, [nextPrayer, countdownScale]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -114,7 +159,7 @@ export default function PrayerScreen() {
           }
         >
           {/* Date row */}
-          <View style={styles.header}>
+          <Reanimated.View entering={FadeInDown.duration(500).springify()} style={styles.header}>
             <View>
               <View style={styles.cityRow}>
                 <Ionicons name="location-outline" size={14} color={colors.gold} />
@@ -130,7 +175,7 @@ export default function PrayerScreen() {
               </Text>
               <Text style={styles.gregorianYear}>{now.getFullYear()}</Text>
             </View>
-          </View>
+          </Reanimated.View>
 
           {loading ? (
             <View style={styles.loadingContainer}>
@@ -155,13 +200,37 @@ export default function PrayerScreen() {
             <>
               {/* Next Prayer Card */}
               {nextPrayer && (
-                <View style={styles.nextCard}>
+                <Reanimated.View
+                  entering={ZoomIn.duration(600).springify().damping(16)}
+                  style={[styles.nextCard, cardGlowStyle]}
+                >
                   <LinearGradient
                     colors={[colors.primary + "30", colors.primary + "08"]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={StyleSheet.absoluteFill}
                   />
+                  {/* Shimmer dots */}
+                  {[
+                    { top: "12%", right: "8%", size: 5, opacity: 0.5 },
+                    { top: "60%", left: "5%", size: 3, opacity: 0.3 },
+                    { top: "20%", left: "15%", size: 4, opacity: 0.4 },
+                  ].map((star, i) => (
+                    <View
+                      key={i}
+                      style={{
+                        position: "absolute",
+                        width: star.size,
+                        height: star.size,
+                        borderRadius: star.size / 2,
+                        backgroundColor: colors.gold,
+                        opacity: star.opacity,
+                        top: star.top as any,
+                        left: (star as any).left,
+                        right: (star as any).right,
+                      }}
+                    />
+                  ))}
                   <View style={styles.nextCardInner}>
                     <View style={styles.nextLabelRow}>
                       <Animated.View style={[styles.liveDot, { opacity: dotAnim }]} />
@@ -170,7 +239,9 @@ export default function PrayerScreen() {
                     <Text style={styles.nextPrayerName}>
                       {getPrayerLabel(nextPrayer.name)}
                     </Text>
-                    <Text style={styles.countdown}>{countdown}</Text>
+                    <Reanimated.Text style={[styles.countdown, countdownStyle]}>
+                      {countdown}
+                    </Reanimated.Text>
                     <View style={styles.nextTimePill}>
                       <Ionicons
                         name={PRAYER_ICONS[nextPrayer.name] as any}
@@ -180,7 +251,7 @@ export default function PrayerScreen() {
                       <Text style={styles.nextTime}>{formatTime(nextPrayer.time)}</Text>
                     </View>
                   </View>
-                </View>
+                </Reanimated.View>
               )}
 
               {/* Prayer Times */}
@@ -189,8 +260,9 @@ export default function PrayerScreen() {
                   const isNext = nextPrayer?.name === prayer.name;
                   const isPast = prayer.time < now;
                   return (
-                    <View
+                    <Reanimated.View
                       key={prayer.name}
+                      entering={FadeInDown.delay(idx * 90).duration(400).springify().damping(14)}
                       style={[
                         styles.prayerRow,
                         isNext && styles.prayerRowNext,
@@ -222,7 +294,7 @@ export default function PrayerScreen() {
                             {getPrayerLabel(prayer.name)}
                           </Text>
                           {isPast && !isNext && (
-                            <Text style={styles.pastLabel}>Passed</Text>
+                            <Text style={styles.pastLabel}>Passé</Text>
                           )}
                         </View>
                       </View>
@@ -236,17 +308,20 @@ export default function PrayerScreen() {
                         </Text>
                         {isNext && (
                           <View style={styles.nextBadge}>
-                            <Text style={styles.nextBadgeText}>NEXT</Text>
+                            <Text style={styles.nextBadgeText}>SUIVANTE</Text>
                           </View>
                         )}
                       </View>
-                    </View>
+                    </Reanimated.View>
                   );
                 })}
               </View>
 
               {/* Qibla */}
-              <View style={styles.qiblaCard}>
+              <Reanimated.View
+                entering={FadeInUp.delay(600).duration(500).springify().damping(14)}
+                style={styles.qiblaCard}
+              >
                 <LinearGradient
                   colors={[colors.gold + "18", colors.gold + "05"]}
                   start={{ x: 0, y: 0 }}
@@ -266,7 +341,7 @@ export default function PrayerScreen() {
                   <Text style={styles.qiblaDeg}>{qiblaDirection}°</Text>
                   <Text style={styles.qiblaUnit}>from North</Text>
                 </View>
-              </View>
+              </Reanimated.View>
             </>
           )}
         </ScrollView>
@@ -365,7 +440,7 @@ function makeStyles(colors: any, topPad: number, bottomPad: number) {
       padding: 28,
       alignItems: "center",
       marginBottom: 16,
-      borderWidth: 1,
+      borderWidth: 1.5,
       borderColor: colors.gold + "35",
       overflow: "hidden",
       shadowColor: colors.primary,
